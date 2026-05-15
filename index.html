@@ -378,9 +378,12 @@
 </div>
 
 <script>
-  const APP_ID     = 'vRgaQHcLHfT99hgEWsf4';
-  const SECRET_KEY = 'TN6VLAYtIBPkhBkdmWwA3YOz5ereudn0';
+  const APP_ID     = 'WBgAAMpFuMFynZ9DQWJ7';
+  const SECRET_KEY = 'QIWL1qUn67YBolKHDf8hFMAM5s0x78Ju';
   const STORE_WA   = '628117694443';
+
+  // Token segar — auto-refresh kalau expired
+  const INITIAL_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hcGktb3Blbi5vbHNlcmEuY28uaWRcL2FwaVwvb3Blbi1hcGlcL3YxXC9pZFwvdG9rZW4iLCJpYXQiOjE3Nzg4NDUxMjEsImV4cCI6MTc3ODkzMTUyMSwibmJmIjoxNzc4ODQ1MTIxLCJqdGkiOiJlYjhlNGIzYmVlYTI2NWE2YzU4MmU3MTE3YTVhZTI2NGVlZjE3ZGJkY2I3ZTNmMDJhNDBmYzM1YTM4ZWEzODUwMzFkMzA0ZTkxYmVlMmMzYjE3Nzg4NDUxMjEiLCJzdWIiOjIxMCwicHJ2IjoiNDI1YzY2MmRjMWU4MDlkM2UxOGNhNDU3NjFkMGY2MWQ4MGJmNmNlMyIsImd1YXJkIjoib3BlbmFwaSIsImFwcF9pZCI6IldCZ0FBTXBGdU1GeW5aOURRV0o3Iiwic3RvcmVfdXJsX2lkIjoidnBrbmJyIn0.zDm8yMsi99O_05uuFPE_6IvvoXJZgmKoGT35HLEb5Jk';
 
   let products       = [];
   let selectedShip   = '';
@@ -395,18 +398,58 @@
     el.innerHTML = msg ? `<div class="status-bar s-${type}">${msg}</div>` : '';
   }
 
+  const CACHE_KEY_PRODUCTS  = 'vpknbr_products_v2';
+  const CACHE_KEY_TOKEN     = 'vpknbr_token_v2';
+  const CACHE_KEY_TOKEN_EXP = 'vpknbr_token_exp_v2';
+  const CACHE_KEY_PROD_EXP  = 'vpknbr_prod_exp_v2';
+  const TOKEN_TTL   = 50 * 60 * 1000;
+  const PRODUCT_TTL = 60 * 60 * 1000;
+
+  // Seed token segar ke cache supaya tidak request ulang
+  (function seedToken() {
+    const exp = 1778931521 * 1000; // exp dari JWT di atas
+    if (Date.now() < exp) {
+      localStorage.setItem(CACHE_KEY_TOKEN, INITIAL_TOKEN);
+      localStorage.setItem(CACHE_KEY_TOKEN_EXP, exp);
+    }
+  })();
+
+  async function getToken() {
+    const now    = Date.now();
+    const cached = localStorage.getItem(CACHE_KEY_TOKEN);
+    const exp    = parseInt(localStorage.getItem(CACHE_KEY_TOKEN_EXP) || '0');
+    if (cached && exp > now) return cached;
+
+    // Token expired — minta baru
+    const tr = await fetch('https://api-open.olsera.co.id/api/open-api/v1/id/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ app_id: APP_ID, secret_key: SECRET_KEY, grant_type: 'secret_key' })
+    });
+    if (!tr.ok) throw new Error('Gagal ambil token (' + tr.status + ')');
+    const td    = await tr.json();
+    const token = td.access_token || (td.data && td.data.access_token) || td.token || '';
+    if (!token) throw new Error('Token tidak ditemukan');
+    localStorage.setItem(CACHE_KEY_TOKEN, token);
+    localStorage.setItem(CACHE_KEY_TOKEN_EXP, now + TOKEN_TTL);
+    return token;
+  }
+
   async function initOlsera() {
+    // Cek cache produk dulu
+    const now = Date.now();
+    const cachedProds = localStorage.getItem(CACHE_KEY_PRODUCTS);
+    const prodExp     = parseInt(localStorage.getItem(CACHE_KEY_PROD_EXP) || '0');
+    if (cachedProds && prodExp > now) {
+      productOptions = JSON.parse(cachedProds);
+      setStatus('<i class="ti ti-check"></i> ' + productOptions.length + ' produk dimuat (cache)', 'ok');
+      setTimeout(() => setStatus('', ''), 2000);
+      renderAll(); calcTotal(); return;
+    }
+
     setStatus('<span class="spin"><i class="ti ti-refresh"></i></span> Memuat produk dari Olsera...', 'load');
     try {
-      const tr = await fetch('https://api-open.olsera.co.id/api/open-api/v1/id/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ app_id: APP_ID, secret_key: SECRET_KEY, grant_type: 'secret_key' })
-      });
-      if (!tr.ok) throw new Error('Gagal ambil token (' + tr.status + ')');
-      const td = await tr.json();
-      const token = td.access_token || (td.data && td.data.access_token) || td.token || '';
-      if (!token) throw new Error('Token tidak ditemukan');
+      const token = await getToken();
 
       const ir = await fetch('https://api-open.olsera.co.id/api/open-api/v1/id/item?limit=200&page=1', {
         headers: { 'Authorization': 'Bearer ' + token }
@@ -421,6 +464,10 @@
         price : parseFloat(i.price || i.sell_price || i.selling_price || 0),
         image : i.image || i.image_url || i.photo || i.img || ''
       })).filter(i => i.name);
+
+      // Simpan ke cache
+      localStorage.setItem(CACHE_KEY_PRODUCTS, JSON.stringify(productOptions));
+      localStorage.setItem(CACHE_KEY_PROD_EXP, now + PRODUCT_TTL);
 
       setStatus('<i class="ti ti-check"></i> ' + productOptions.length + ' produk berhasil dimuat', 'ok');
       setTimeout(() => setStatus('', ''), 2500);
