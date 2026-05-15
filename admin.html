@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — vpknbr</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f0ede8; --surface: #fff; --border: #e2e2de; --border-s: #c8c8c4;
+      --text: #1a1a18; --text-s: #6b6b68; --text-t: #a0a09c;
+      --info-bg: #e8f0fe; --info-text: #1a4bbd; --info-border: #b8d0fc;
+      --success-bg: #e6f7ee; --success-text: #0f6b35; --success-border: #a8ddb9;
+      --warn-bg: #fff8e1; --warn-text: #7a5800;
+      --r: 10px; --rs: 6px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; padding: 1.5rem 1rem 5rem; }
+    .app { max-width: 520px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 1.75rem; }
+    .header h1 { font-size: 20px; font-weight: 700; }
+    .header p { font-size: 13px; color: var(--text-s); margin-top: 3px; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; background: #1a4bbd; color: #fff; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
+
+    .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.25rem; margin-bottom: 12px; }
+    .sec-title { font-size: 11px; font-weight: 700; color: var(--text-s); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+
+    /* Paste area */
+    .paste-area { width: 100%; min-height: 120px; padding: 10px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; resize: vertical; line-height: 1.6; }
+    .paste-area:focus { outline: none; border-color: #1a1a18; }
+    .btn-parse { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; margin-top: 8px; background: #1a1a18; color: #fff; border: none; border-radius: var(--rs); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-parse:hover { background: #333; }
+
+    /* Order info */
+    .info-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
+    .info-label { color: var(--text-s); font-weight: 500; white-space: nowrap; padding: 3px 0; }
+    .info-value { color: var(--text); padding: 3px 0; }
+    .field { margin-bottom: 10px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 12px; color: var(--text-s); margin-bottom: 4px; font-weight: 500; }
+    input[type=text], input[type=number], textarea {
+      width: 100%; padding: 9px 11px; font-size: 14px; border: 1px solid var(--border);
+      border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit;
+    }
+    input:focus, textarea:focus { outline: none; border-color: #1a1a18; }
+
+    /* Product rows admin */
+    .prod-table { width: 100%; border-collapse: collapse; }
+    .prod-table th { font-size: 11px; color: var(--text-s); font-weight: 600; padding: 0 6px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+    .prod-table th.r { text-align: right; }
+    .prod-table td { padding: 6px; vertical-align: middle; border-bottom: 1px solid var(--border); }
+    .prod-table td.r { text-align: right; }
+    .prod-name { font-size: 13px; color: var(--text); }
+    .prod-qty { font-size: 13px; color: var(--text-s); text-align: center; }
+    .price-input { width: 100px; padding: 6px 8px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; text-align: right; }
+    .price-input:focus { outline: none; border-color: #1a1a18; }
+    .subtotal-cell { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; text-align: right; min-width: 90px; }
+
+    /* Total box */
+    .total-box { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; }
+    .total-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-s); margin-bottom: 6px; align-items: center; }
+    .total-row input { width: 120px; padding: 5px 8px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; text-align: right; }
+    .total-row input:focus { outline: none; border-color: #1a1a18; }
+    .total-final { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 6px; }
+    .total-final span:last-child { color: #0f6b35; }
+
+    /* Action buttons */
+    .action-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border: none; border-radius: var(--rs); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-wa { background: #25D366; color: #fff; }
+    .btn-wa:hover { background: #1ebe5d; }
+    .btn-copy { background: var(--surface); color: var(--text); border: 1px solid var(--border-s); }
+    .btn-copy:hover { background: var(--bg); }
+    .btn-olsera { background: var(--info-bg); color: var(--info-text); border: 1px solid var(--info-border); }
+    .btn-olsera:hover { opacity: .85; }
+    .btn:active { transform: scale(.98); }
+
+    .empty-state { text-align: center; padding: 2rem 1rem; color: var(--text-t); }
+    .empty-state i { font-size: 36px; margin-bottom: 10px; display: block; }
+    .empty-state p { font-size: 14px; }
+
+    .copied-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a18; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; }
+    .copied-toast.show { opacity: 1; }
+
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div style="font-size:28px;margin-bottom:6px">⚙️</div>
+    <h1>Admin Panel <span class="badge">vpknbr</span></h1>
+    <p>Isi harga → total otomatis → balas WA customer</p>
+  </div>
+
+  <!-- Step 1: Paste pesanan -->
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-clipboard-text"></i> Step 1 — Paste Pesan WA</div>
+    <textarea class="paste-area" id="pasteArea" placeholder="Paste pesan pesanan dari WA customer di sini...
+
+Contoh:
+🧾 PESANAN BARU
+Nama: Budi
+WA: 628...
+Alamat: Jl. ...
+Produk:
+1. Foom Icy Mango — 1 pcs
+2. Oxva V3 0.8 — 2 pcs
+Pengiriman: GoSend"></textarea>
+    <button class="btn-parse" onclick="parseOrder()">
+      <i class="ti ti-wand"></i> Parse Otomatis
+    </button>
+  </div>
+
+  <!-- Step 2: Isi harga -->
+  <div class="section" id="orderSection" style="display:none">
+    <div class="sec-title"><i class="ti ti-receipt"></i> Step 2 — Isi Harga & Ongkir</div>
+
+    <div class="info-grid" id="orderInfo"></div>
+
+    <div class="divider"></div>
+
+    <table class="prod-table">
+      <thead>
+        <tr>
+          <th>Produk</th>
+          <th style="text-align:center;width:40px">Qty</th>
+          <th class="r" style="width:110px">Harga Satuan</th>
+          <th class="r" style="width:100px">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody id="priceTable"></tbody>
+    </table>
+
+    <div class="total-box">
+      <div class="total-row">
+        <span>Subtotal produk</span>
+        <span id="subtotalDisp" style="font-weight:600">Rp 0</span>
+      </div>
+      <div class="total-row">
+        <span>Ongkir</span>
+        <input type="number" id="ongkirInput" placeholder="0" min="0" oninput="calcTotal()" />
+      </div>
+      <div class="total-final">
+        <span>Total Tagihan</span>
+        <span id="totalDisp">Rp 0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Kirim -->
+  <div class="section" id="actionSection" style="display:none">
+    <div class="sec-title"><i class="ti ti-send"></i> Step 3 — Kirim & Salin</div>
+    <div class="action-grid">
+      <button class="btn btn-wa" onclick="replyCustomer()">
+        <i class="ti ti-brand-whatsapp"></i> Balas WA Customer dengan Total
+      </button>
+      <button class="btn btn-copy" onclick="copyInvoice()">
+        <i class="ti ti-copy"></i> Salin Teks Invoice Lengkap
+      </button>
+      <button class="btn btn-olsera" onclick="copyOlsera()">
+        <i class="ti ti-database"></i> Salin Format Input Olsera / Sistem
+      </button>
+    </div>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <i class="ti ti-arrow-up"></i>
+    <p>Paste pesan WA customer di atas,<br>lalu klik "Parse Otomatis"</p>
+  </div>
+</div>
+
+<div class="copied-toast" id="toast">✓ Disalin!</div>
+
+<script>
+  let order = { name:'', wa:'', addr:'', products:[], kurir:'', time:'' };
+
+  function fmt(n) { return 'Rp ' + Math.round(n||0).toLocaleString('id-ID'); }
+  function parsePrice(v) { return parseFloat(String(v).replace(/[^\d]/g,''))||0; }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '✓ ' + msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  function parseOrder() {
+    const raw = document.getElementById('pasteArea').value.trim();
+    if (!raw) { alert('Paste dulu pesan WA customer.'); return; }
+
+    // Reset
+    order = { name:'', wa:'', addr:'', products:[], kurir:'', time:'' };
+
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+
+    let addrMode = false;
+    let prodMode = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const l = lines[i];
+
+      // Nama
+      if (/nama[:\*]/i.test(l)) {
+        order.name = l.replace(/.*nama[:\*\s]+/i,'').replace(/\*/g,'').trim();
+        addrMode = false; prodMode = false;
+      }
+      // WA
+      else if (/^[📱\*]*wa[:\*]/i.test(l) || /nomor|whatsapp/i.test(l)) {
+        order.wa = l.replace(/.*[:\*]\s*/,'').replace(/\*/g,'').trim();
+        addrMode = false; prodMode = false;
+      }
+      // Waktu
+      else if (/^[🕐⏰]*\s*\d{1,2}[\\/]\d{1,2}/.test(l)) {
+        order.time = l.replace(/^[🕐⏰\s]*/,'').trim();
+      }
+      // Alamat — mulai
+      else if (/alamat/i.test(l)) {
+        addrMode = true; prodMode = false;
+        const inline = l.replace(/.*alamat[:\*\s]+/i,'').replace(/\*/g,'').trim();
+        if (inline) order.addr = inline;
+      }
+      // Produk header
+      else if (/produk/i.test(l) && /[\*🛒]/.test(l)) {
+        addrMode = false; prodMode = true;
+      }
+      // Pengiriman
+      else if (/pengiriman/i.test(l)) {
+        addrMode = false; prodMode = false;
+        order.kurir = l.replace(/.*pengiriman[:\*\s]+/i,'').replace(/\*/g,'').trim();
+      }
+      // Produk item: "1. nama — 2 pcs" atau "1. nama x2"
+      else if (prodMode && /^\d+[\.\)]/.test(l)) {
+        const clean = l.replace(/^\d+[\.\)]\s*/,'').replace(/\*/g,'');
+        const qtyMatch = clean.match(/[—\-–]\s*(\d+)\s*pcs/i) || clean.match(/x\s*(\d+)/i) || clean.match(/(\d+)\s*pcs/i);
+        const qty = qtyMatch ? parseInt(qtyMatch[1]) : 1;
+        const name = clean.replace(/[—\-–]\s*\d+\s*pcs.*/i,'').replace(/x\s*\d+.*/i,'').replace(/\d+\s*pcs.*/i,'').trim();
+        if (name) order.products.push({ name, qty, price: '' });
+      }
+      // Alamat lanjutan
+      else if (addrMode && !/^(🛒|🚚|📦|💰|━)/.test(l) && !/produk|pengiriman|ongkir|total/i.test(l)) {
+        order.addr += (order.addr ? ', ' : '') + l.replace(/\*/g,'').trim();
+      }
+    }
+
+    if (!order.products.length) {
+      alert('Produk tidak terbaca. Pastikan format pesan sesuai.');
+      return;
+    }
+
+    renderOrderPanel();
+  }
+
+  function renderOrderPanel() {
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('orderSection').style.display = 'block';
+    document.getElementById('actionSection').style.display = 'block';
+
+    // Info
+    const info = document.getElementById('orderInfo');
+    info.innerHTML = `
+      <span class="info-label">Nama</span><span class="info-value">${order.name || '—'}</span>
+      <span class="info-label">WA</span><span class="info-value">${order.wa || '—'}</span>
+      <span class="info-label">Kurir</span><span class="info-value">${order.kurir || '—'}</span>
+      <span class="info-label">Alamat</span><span class="info-value" style="white-space:pre-wrap">${order.addr || '—'}</span>
+    `;
+
+    // Products
+    const tbody = document.getElementById('priceTable');
+    tbody.innerHTML = '';
+    order.products.forEach((p, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="prod-name">${p.name}</td>
+        <td class="prod-qty">${p.qty}</td>
+        <td>
+          <input class="price-input" type="number" placeholder="0" min="0"
+            value="${p.price}"
+            oninput="order.products[${i}].price=this.value;calcTotal();document.getElementById('psub_${i}').textContent=parsePrice(this.value)>0?fmt(parsePrice(this.value)*${p.qty}):'—'" />
+        </td>
+        <td class="subtotal-cell" id="psub_${i}">—</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('ongkirInput').value = '';
+    calcTotal();
+  }
+
+  function calcTotal() {
+    const sub = order.products.reduce((s, p) => s + parsePrice(p.price) * p.qty, 0);
+    const ongkir = parsePrice(document.getElementById('ongkirInput').value);
+    document.getElementById('subtotalDisp').textContent = fmt(sub);
+    document.getElementById('totalDisp').textContent = fmt(sub + ongkir);
+  }
+
+  function buildInvoiceText() {
+    const sub    = order.products.reduce((s, p) => s + parsePrice(p.price) * p.qty, 0);
+    const ongkir = parsePrice(document.getElementById('ongkirInput').value);
+    const total  = sub + ongkir;
+    const now    = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
+
+    let t = '🧾 *INVOICE PESANAN*\n';
+    t += '━━━━━━━━━━━━━━━━━━━\n';
+    t += `🕐 ${now}\n`;
+    if (order.name) t += `👤 *Nama:* ${order.name}\n`;
+    if (order.addr) t += `📍 *Alamat:* ${order.addr}\n`;
+    t += '\n🛒 *Rincian Produk:*\n';
+    order.products.forEach((p, i) => {
+      const pr = parsePrice(p.price);
+      t += pr > 0
+        ? `${i+1}. ${p.name}\n   ${p.qty} x ${fmt(pr)} = *${fmt(pr*p.qty)}*\n`
+        : `${i+1}. ${p.name} — ${p.qty} pcs\n`;
+    });
+    t += `\n📦 Subtotal produk : ${fmt(sub)}\n`;
+    t += `🚚 Ongkir ${order.kurir||''} : ${ongkir > 0 ? fmt(ongkir) : 'Gratis'}\n`;
+    t += '─────────────────────\n';
+    t += `💰 *TOTAL TAGIHAN : ${fmt(total)}*\n`;
+    t += '━━━━━━━━━━━━━━━━━━━\n';
+    t += '_Mohon transfer sesuai nominal di atas. Terima kasih!_ 🙏';
+    return t;
+  }
+
+  function buildOlseraText() {
+    const sub    = order.products.reduce((s, p) => s + parsePrice(p.price) * p.qty, 0);
+    const ongkir = parsePrice(document.getElementById('ongkirInput').value);
+    const total  = sub + ongkir;
+    const now    = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
+
+    let t = `=== INPUT OLSERA ===\n`;
+    t += `Tanggal   : ${now}\n`;
+    t += `Customer  : ${order.name}\n`;
+    t += `WA        : ${order.wa}\n`;
+    t += `Alamat    : ${order.addr}\n`;
+    t += `Kurir     : ${order.kurir}\n`;
+    t += `Ongkir    : ${fmt(ongkir)}\n\n`;
+    t += `--- Produk ---\n`;
+    order.products.forEach((p, i) => {
+      const pr = parsePrice(p.price);
+      t += `${i+1}. ${p.name}\n`;
+      t += `   Qty   : ${p.qty}\n`;
+      t += `   Harga : ${fmt(pr)}\n`;
+      t += `   Sub   : ${fmt(pr * p.qty)}\n`;
+    });
+    t += `\n--- Total ---\n`;
+    t += `Subtotal  : ${fmt(sub)}\n`;
+    t += `Ongkir    : ${fmt(ongkir)}\n`;
+    t += `TOTAL     : ${fmt(total)}\n`;
+    t += `===================`;
+    return t;
+  }
+
+  function replyCustomer() {
+    if (!order.wa) { alert('Nomor WA customer tidak ditemukan.'); return; }
+    const wa = order.wa.replace(/\D/g,'');
+    const waFmt = wa.startsWith('0') ? '62'+wa.slice(1) : wa;
+    const text = buildInvoiceText();
+    window.open('https://wa.me/'+waFmt+'?text='+encodeURIComponent(text), '_blank');
+  }
+
+  function copyInvoice() {
+    const text = buildInvoiceText();
+    navigator.clipboard ? navigator.clipboard.writeText(text).then(() => showToast('Invoice disalin!')) : fallbackCopy(text);
+  }
+
+  function copyOlsera() {
+    const text = buildOlseraText();
+    navigator.clipboard ? navigator.clipboard.writeText(text).then(() => showToast('Format Olsera disalin!')) : fallbackCopy(text);
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Disalin!');
+  }
+</script>
+</body>
+</html>
