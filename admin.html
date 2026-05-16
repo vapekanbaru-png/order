@@ -276,76 +276,79 @@
     if (!raw) { alert('Paste dulu pesan WA customer.'); return; }
     order = { name:'', wa:'', addr:'', products:[], kurir:'', time:'' };
 
-    // Strip emoji & unicode symbols
-    const strip = s => s.replace(/[^\x00-\xFF]/g, ' ').replace(/[-=]{3,}/g,' ').trim();
+    // Bersihkan emoji & unicode
+    function strip(s) {
+      var result = '';
+      for (var i = 0; i < s.length; i++) {
+        var code = s.charCodeAt(i);
+        if (code <= 255) result += s[i];
+        else result += ' ';
+      }
+      return result.replace(/[-=]{3,}/g,' ').trim();
+    }
 
-    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-    let addrMode = false, prodMode = false;
+    var lines = raw.split('\n');
+    var addrMode = false, prodMode = false;
 
-    for (let l of lines) {
-      const c = strip(l); // cleaned line
+    for (var li = 0; li < lines.length; li++) {
+      var l = lines[li].trim();
+      if (!l) continue;
+      var c = strip(l);
+      if (!c) continue;
 
-      // Nama
-      if (/nama\s*[:\*]/i.test(c)) {
-        order.name = c.replace(/.*nama\s*[:\*\s]+/i,'').replace(/\*/g,'').trim();
+      var isNama       = /nama\s*[:\*:]/i.test(c);
+      var isWA         = /\bwa\b|whatsapp|no\.?\s*wa|nomor/i.test(c);
+      var isAlamat     = /alamat/i.test(c);
+      var isProdukHdr  = /\bproduk\b/i.test(c) && !/^\d/.test(c);
+      var isPengiriman = /pengiriman/i.test(c);
+      var isItem       = /^\d+[\.\.)]\s+\S/.test(c);
+      var isGarbage    = /subtotal|ongkir|total|diskon|mohon|terima|invoice|pesanan baru/i.test(c);
+
+      if (isNama) {
+        order.name = c.replace(/.*nama\s*[:\*:\s]+/i,'').replace(/\*/g,'').trim();
         addrMode=false; prodMode=false;
-      }
-      // WA / nomor
-      else if (/\bwa\b|whatsapp|nomor\s*hp|no\.?\s*wa/i.test(c)) {
-        const m = c.match(/(\+?62[\d]{8,}|0[\d]{8,})/);
-        if (m) order.wa = m[1];
-        else { const m2 = c.match(/[:\*]\s*([\d\+\s\-]{9,})/); if (m2) order.wa = m2[1].replace(/[\s\-]/g,''); }
+      } else if (isWA) {
+        var m = c.match(/(\+?62[\d]{8,}|0[\d]{8,})/);
+        if (m) { order.wa = m[1]; }
+        else { var m2 = c.match(/[:\*]\s*([\d\+][\d\s\-]{8,})/); if (m2) order.wa = m2[1].replace(/[\s\-]/g,''); }
         addrMode=false; prodMode=false;
-      }
-      // Tanggal/waktu
-      else if (/^\d{1,2}[\/\\.]\d{1,2}/.test(c)) {
-        order.time = c.trim();
-      }
-      // Alamat
-      else if (/alamat/i.test(c)) {
+      } else if (isAlamat) {
         addrMode=true; prodMode=false;
-        const inline = c.replace(/.*alamat\s*[:\*\s]+/i,'').replace(/\*/g,'').trim();
+        var inline = c.replace(/.*alamat\s*[:\*:\s]+/i,'').replace(/\*/g,'').trim();
         if (inline) order.addr = inline;
-      }
-      // Produk header (dengan atau tanpa emoji)
-      else if (/\bproduk\b/i.test(c)) {
+      } else if (isProdukHdr) {
         addrMode=false; prodMode=true;
-      }
-      // Pengiriman
-      else if (/pengiriman/i.test(c)) {
+      } else if (isPengiriman) {
         addrMode=false; prodMode=false;
-        order.kurir = c.replace(/.*pengiriman\s*[:\*\s]+/i,'').replace(/\*/g,'').trim();
-      }
-      // Baris produk: "1. nama — 2 pcs" — AKTIF jika prodMode ATAU langsung ada pola ini
-      else if ((prodMode || /^\d+[\.\)]\s+\S/.test(c)) && /^\d+[\.\)]/.test(c) && !/^(\d{1,2}[\/\\.]\d{1,2})/.test(c)) {
-        addrMode=false; prodMode=true; // auto-set prodMode
-        const clean = c.replace(/^\d+[\.\)]\s*/,'').replace(/\*/g,'');
-        // skip baris subtotal/total/ongkir
-        if (/subtotal|ongkir|total|diskon/i.test(clean)) continue;
-        const qtyM = clean.match(/[—\-\u2013]\s*(\d+)\s*pcs/i)
-                  || clean.match(/\bx\s*(\d+)/i)
-                  || clean.match(/(\d+)\s*pcs/i);
-        const qty = qtyM ? parseInt(qtyM[1]) : 1;
-        const name = clean
-          .replace(/[—\-\u2013]\s*\d+\s*pcs.*/i,'')
+        order.kurir = c.replace(/.*pengiriman\s*[:\*:\s]+/i,'').replace(/\*/g,'').trim();
+      } else if (isItem && !isGarbage) {
+        addrMode=false; prodMode=true;
+        var clean = c.replace(/^\d+[\.\.)]\s*/,'').replace(/\*/g,'');
+        var qtyM = clean.match(/[\u2014\-\u2013]\s*(\d+)\s*pcs/i)
+                || clean.match(/\bx\s*(\d+)/i)
+                || clean.match(/(\d+)\s*pcs/i);
+        var qty = qtyM ? parseInt(qtyM[1]) : 1;
+        var name = clean
+          .replace(/[\u2014\-\u2013]\s*\d+\s*pcs.*/i,'')
           .replace(/\bx\s*\d+.*/i,'')
           .replace(/\d+\s*pcs.*/i,'')
           .replace(/Rp[\s\d.,]+/g,'')
           .trim();
-        if (name && name.length > 1) order.products.push({name, qty, price:'', discVal:'', discType:'pct'});
-      }
-      // Alamat lanjutan
-      else if (addrMode && !/produk|pengiriman|ongkir|total|invoice|mohon|terima|pesanan/i.test(c) && c.length > 2) {
+        if (name && name.length > 1) {
+          order.products.push({name:name, qty:qty, price:'', discVal:'', discType:'pct'});
+        }
+      } else if (addrMode && !isGarbage && c.length > 2) {
         order.addr += (order.addr ? ', ' : '') + c.replace(/\*/g,'').trim();
       }
     }
 
     if (!order.products.length) {
-      alert('Produk tidak terbaca.\n\nPastikan format ada "1. nama produk — N pcs"');
+      alert('Produk tidak terbaca.\n\nPastikan ada baris: 1. nama produk — N pcs');
       return;
     }
     renderOrderPanel();
   }
+
 
 
 
