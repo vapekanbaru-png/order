@@ -276,5 +276,222 @@
     if (!raw) { alert('Paste dulu pesan WA customer.'); return; }
     order = { name:'', wa:'', addr:'', products:[], kurir:'', time:'' };
 
-    // Strip emoji & unicode agar parsing tidak gagal karena emoji
-    const strip = s => s.replace(/[^
+    // Strip emoji & unicode symbols
+    const strip = s => s.replace(/[^\x00-\xFF]/g, ' ').replace(/[-=]{3,}/g,' ').trim();
+
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+    let addrMode = false, prodMode = false;
+
+    for (let l of lines) {
+      const c = strip(l); // cleaned line
+
+      // Nama
+      if (/nama\s*[:\*]/i.test(c)) {
+        order.name = c.replace(/.*nama\s*[:\*\s]+/i,'').replace(/\*/g,'').trim();
+        addrMode=false; prodMode=false;
+      }
+      // WA / nomor
+      else if (/\bwa\b|whatsapp|nomor\s*hp|no\.?\s*wa/i.test(c)) {
+        const m = c.match(/(\+?62[\d]{8,}|0[\d]{8,})/);
+        if (m) order.wa = m[1];
+        else { const m2 = c.match(/[:\*]\s*([\d\+\s\-]{9,})/); if (m2) order.wa = m2[1].replace(/[\s\-]/g,''); }
+        addrMode=false; prodMode=false;
+      }
+      // Tanggal/waktu
+      else if (/^\d{1,2}[\/\\.]\d{1,2}/.test(c)) {
+        order.time = c.trim();
+      }
+      // Alamat
+      else if (/alamat/i.test(c)) {
+        addrMode=true; prodMode=false;
+        const inline = c.replace(/.*alamat\s*[:\*\s]+/i,'').replace(/\*/g,'').trim();
+        if (inline) order.addr = inline;
+      }
+      // Produk header (dengan atau tanpa emoji)
+      else if (/\bproduk\b/i.test(c)) {
+        addrMode=false; prodMode=true;
+      }
+      // Pengiriman
+      else if (/pengiriman/i.test(c)) {
+        addrMode=false; prodMode=false;
+        order.kurir = c.replace(/.*pengiriman\s*[:\*\s]+/i,'').replace(/\*/g,'').trim();
+      }
+      // Baris produk: "1. nama — 2 pcs" — AKTIF jika prodMode ATAU langsung ada pola ini
+      else if ((prodMode || /^\d+[\.\)]\s+\S/.test(c)) && /^\d+[\.\)]/.test(c) && !/^(\d{1,2}[\/\\.]\d{1,2})/.test(c)) {
+        addrMode=false; prodMode=true; // auto-set prodMode
+        const clean = c.replace(/^\d+[\.\)]\s*/,'').replace(/\*/g,'');
+        // skip baris subtotal/total/ongkir
+        if (/subtotal|ongkir|total|diskon/i.test(clean)) continue;
+        const qtyM = clean.match(/[—\-\u2013]\s*(\d+)\s*pcs/i)
+                  || clean.match(/\bx\s*(\d+)/i)
+                  || clean.match(/(\d+)\s*pcs/i);
+        const qty = qtyM ? parseInt(qtyM[1]) : 1;
+        const name = clean
+          .replace(/[—\-\u2013]\s*\d+\s*pcs.*/i,'')
+          .replace(/\bx\s*\d+.*/i,'')
+          .replace(/\d+\s*pcs.*/i,'')
+          .replace(/Rp[\s\d.,]+/g,'')
+          .trim();
+        if (name && name.length > 1) order.products.push({name, qty, price:'', discVal:'', discType:'pct'});
+      }
+      // Alamat lanjutan
+      else if (addrMode && !/produk|pengiriman|ongkir|total|invoice|mohon|terima|pesanan/i.test(c) && c.length > 2) {
+        order.addr += (order.addr ? ', ' : '') + c.replace(/\*/g,'').trim();
+      }
+    }
+
+    if (!order.products.length) {
+      alert('Produk tidak terbaca.\n\nPastikan format ada "1. nama produk — N pcs"');
+      return;
+    }
+    renderOrderPanel();
+  }
+
+
+
+  function renderOrderPanel() {
+    document.getElementById('emptyState').style.display='none';
+    document.getElementById('orderSection').style.display='block';
+    document.getElementById('actionSection').style.display='block';
+    document.getElementById('orderInfo').innerHTML=`
+      <span class="info-label">Nama</span><span class="info-value">${order.name||'—'}</span>
+      <span class="info-label">WA</span><span class="info-value">${order.wa||'—'}</span>
+      <span class="info-label">Kurir</span><span class="info-value">${order.kurir||'—'}</span>
+      <span class="info-label">Alamat</span><span class="info-value">${order.addr||'—'}</span>`;
+
+    const tbody=document.getElementById('priceTable');
+    tbody.innerHTML='';
+    order.products.forEach((p,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td>
+          <div class="prod-name">${p.name}</div>
+          <div class="item-disc-wrap">
+            <input class="item-disc-input" type="number" placeholder="Diskon" min="0"
+              value="${p.discVal}"
+              oninput="order.products[${i}].discVal=this.value;calcTotal()" />
+            <div class="toggle-wrap">
+              <button class="toggle-btn ${p.discType==='pct'?'active':''}" onclick="setItemDiscType(${i},'pct')">%</button>
+              <button class="toggle-btn ${p.discType==='nom'?'active':''}" onclick="setItemDiscType(${i},'nom')">Rp</button>
+            </div>
+          </div>
+          <span class="item-disc-result" id="idisc_${i}"></span>
+        </td>
+        <td class="prod-qty">${p.qty}</td>
+        <td>
+          <input class="price-input" type="number" placeholder="0" min="0"
+            value="${p.price}"
+            oninput="order.products[${i}].price=this.value;calcTotal()" />
+        </td>
+        <td class="subtotal-cell" id="psub_${i}">—</td>`;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('ongkirInput').value='';
+    document.getElementById('discValue').value='';
+    discType='pct'; discScope='subtotal';
+    document.getElementById('discPct').classList.add('active');
+    document.getElementById('discNom').classList.remove('active');
+    document.getElementById('scope-subtotal').classList.add('active');
+    calcTotal();
+  }
+
+  function setItemDiscType(i, type) {
+    order.products[i].discType=type;
+    // update toggle UI
+    const row=document.getElementById('priceTable').rows[i];
+    row.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+    row.querySelectorAll('.toggle-btn')[type==='pct'?0:1].classList.add('active');
+    calcTotal();
+    // show item disc result
+    const d=getItemDisc(i);
+    const el=document.getElementById('idisc_'+i);
+    if(el) el.textContent=d>0?'− '+fmt(d):'';
+  }
+
+  // Expose calcTotal to update idisc labels too
+  const _calcTotal = calcTotal;
+  function calcTotal() {
+    _calcTotal();
+    order.products.forEach((_,i)=>{
+      const el=document.getElementById('idisc_'+i);
+      const d=getItemDisc(i);
+      if(el) el.textContent=d>0?'− '+fmt(d):'';
+    });
+  }
+
+  function getTotals() {
+    const sub=order.products.reduce((s,p)=>s+parseNum(p.price)*p.qty,0);
+    const itemDiscTotal=order.products.reduce((_,p,i)=>_+getItemDisc(i),0);
+    const discVal=parseNum(document.getElementById('discValue')?.value||0);
+    let subtotalDisc=0;
+    if(discScope==='subtotal') subtotalDisc=discType==='pct'?(sub-itemDiscTotal)*discVal/100:Math.min(discVal,sub-itemDiscTotal);
+    const totalDisc=itemDiscTotal+subtotalDisc;
+    const ongkir=parseNum(document.getElementById('ongkirInput')?.value||0);
+    return { sub, itemDiscTotal, subtotalDisc, totalDisc, ongkir, total:Math.max(0,sub-totalDisc+ongkir) };
+  }
+
+  function buildInvoiceText() {
+    const {sub,itemDiscTotal,subtotalDisc,totalDisc,ongkir,total}=getTotals();
+    const now=new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'});
+    let t='🧾 *INVOICE PESANAN*\n━━━━━━━━━━━━━━━━━━━\n';
+    t+=`🕐 ${now}\n`;
+    if(order.name) t+=`👤 *Nama:* ${order.name}\n`;
+    if(order.addr) t+=`📍 *Alamat:* ${order.addr}\n`;
+    t+='\n🛒 *Rincian Produk:*\n';
+    order.products.forEach((p,i)=>{
+      const pr=parseNum(p.price);
+      const disc=getItemDisc(i);
+      if(pr>0){
+        t+=`${i+1}. ${p.name}\n   ${p.qty} x ${fmt(pr)} = ${fmt(pr*p.qty)}`;
+        if(disc>0) t+=` *(diskon − ${fmt(disc)})*`;
+        t+='\n';
+      } else { t+=`${i+1}. ${p.name} — ${p.qty} pcs\n`; }
+    });
+    t+=`\n📦 Subtotal produk : ${fmt(sub)}\n`;
+    if(itemDiscTotal>0) t+=`🏷️ Diskon item      : − ${fmt(itemDiscTotal)}\n`;
+    if(subtotalDisc>0)  t+=`🏷️ Diskon subtotal  : − ${fmt(subtotalDisc)}\n`;
+    if(totalDisc>0)     t+=`✂️ Total diskon     : − ${fmt(totalDisc)}\n`;
+    t+=`🚚 Ongkir ${order.kurir||''} : ${ongkir>0?fmt(ongkir):'Gratis'}\n`;
+    t+='─────────────────────\n';
+    t+=`💰 *TOTAL TAGIHAN : ${fmt(total)}*\n`;
+    t+='━━━━━━━━━━━━━━━━━━━\n';
+    t+='_Mohon transfer sesuai nominal. Terima kasih!_ 🙏';
+    return t;
+  }
+
+  function buildOlseraText() {
+    const {sub,totalDisc,ongkir,total}=getTotals();
+    const now=new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'});
+    let t=`=== INPUT OLSERA ===\nTanggal   : ${now}\nCustomer  : ${order.name}\nWA        : ${order.wa}\nAlamat    : ${order.addr}\nKurir     : ${order.kurir}\nOngkir    : ${fmt(ongkir)}\n\n--- Produk ---\n`;
+    order.products.forEach((p,i)=>{
+      const pr=parseNum(p.price); const disc=getItemDisc(i);
+      t+=`${i+1}. ${p.name}\n   Qty    : ${p.qty}\n   Harga  : ${fmt(pr)}\n   Diskon : ${disc>0?'− '+fmt(disc):'-'}\n   Sub    : ${fmt(pr*p.qty-disc)}\n`;
+    });
+    t+=`\n--- Total ---\nSubtotal  : ${fmt(sub)}\nDiskon    : ${totalDisc>0?'− '+fmt(totalDisc):'-'}\nOngkir    : ${fmt(ongkir)}\nTOTAL     : ${fmt(total)}\n===================`;
+    return t;
+  }
+
+  function replyCustomer() {
+    if(!order.wa){alert('Nomor WA customer tidak ditemukan.');return;}
+    const wa=order.wa.replace(/\D/g,'');
+    const waFmt=wa.startsWith('0')?'62'+wa.slice(1):wa;
+    window.open('https://wa.me/'+waFmt+'?text='+encodeURIComponent(buildInvoiceText()),'_blank');
+  }
+
+  function copyInvoice() {
+    const t=buildInvoiceText();
+    navigator.clipboard?navigator.clipboard.writeText(t).then(()=>showToast('Invoice disalin!')):fallbackCopy(t,'Invoice disalin!');
+  }
+
+  function copyOlsera() {
+    const t=buildOlseraText();
+    navigator.clipboard?navigator.clipboard.writeText(t).then(()=>showToast('Format Olsera disalin!')):fallbackCopy(t,'Format Olsera disalin!');
+  }
+
+  function fallbackCopy(text,msg) {
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast(msg||'Disalin!');
+  }
+</script>
+</body>
+</html>
