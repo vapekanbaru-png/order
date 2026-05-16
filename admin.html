@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — vpknbr</title>
+  <title>Admin vpknbr</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,63 +23,45 @@
     .badge { display: inline-block; font-size: 11px; font-weight: 700; background: #1a4bbd; color: #fff; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
     .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.25rem; margin-bottom: 12px; }
     .sec-title { font-size: 11px; font-weight: 700; color: var(--text-s); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
-    .paste-area { width: 100%; min-height: 120px; padding: 10px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; resize: vertical; line-height: 1.6; }
+    .paste-area { width: 100%; min-height: 130px; padding: 10px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; resize: vertical; line-height: 1.6; }
     .paste-area:focus { outline: none; border-color: #1a1a18; }
     .btn-parse { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; margin-top: 8px; background: #1a1a18; color: #fff; border: none; border-radius: var(--rs); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
     .btn-parse:hover { background: #333; }
     .info-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
     .info-label { color: var(--text-s); font-weight: 500; white-space: nowrap; padding: 3px 0; }
     .info-value { color: var(--text); padding: 3px 0; }
-    input[type=text], input[type=number], textarea { width: 100%; padding: 9px 11px; font-size: 14px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; }
-    input:focus, textarea:focus { outline: none; border-color: #1a1a18; }
-
-    /* Product table */
+    input[type=number] { width: 100%; padding: 9px 11px; font-size: 14px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; }
+    input:focus { outline: none; border-color: #1a1a18; }
     .prod-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .prod-table th { font-size: 11px; color: var(--text-s); font-weight: 600; padding: 0 5px 8px; text-align: left; border-bottom: 1px solid var(--border); }
     .prod-table th.r { text-align: right; }
     .prod-table td { padding: 6px 5px; vertical-align: top; border-bottom: 1px solid var(--border); }
-    .prod-table td.r { text-align: right; }
-    .prod-name { font-size: 13px; color: var(--text); line-height: 1.4; }
-    .prod-qty { font-size: 13px; color: var(--text-s); text-align: center; }
+    .prod-name { font-size: 13px; color: var(--text); }
+    .prod-qty { font-size: 13px; color: var(--text-s); text-align: center; vertical-align: middle !important; }
     .price-input { width: 100%; padding: 6px 7px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; text-align: right; }
     .price-input:focus { outline: none; border-color: #1a1a18; }
-    .subtotal-cell { font-size: 13px; font-weight: 600; color: var(--text); text-align: right; }
-    .disc-cell { padding-top: 4px; }
-
-    /* Diskon per item */
+    .subtotal-cell { font-size: 13px; font-weight: 600; color: var(--text); text-align: right; vertical-align: middle !important; }
     .item-disc-wrap { display: flex; align-items: center; gap: 3px; margin-top: 4px; }
     .item-disc-input { width: 62px; padding: 4px 6px; font-size: 12px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; text-align: right; }
-    .item-disc-input:focus { outline: none; border-color: #1a1a18; }
     .toggle-wrap { display: flex; border: 1px solid var(--border); border-radius: var(--rs); overflow: hidden; }
     .toggle-btn { padding: 4px 7px; font-size: 11px; font-weight: 700; border: none; background: #fafaf9; color: var(--text-s); cursor: pointer; font-family: inherit; }
     .toggle-btn.active { background: var(--danger); color: #fff; }
     .item-disc-result { font-size: 11px; color: var(--danger); font-weight: 600; display: block; margin-top: 2px; }
-
-    /* Total box */
     .total-box { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
     .total-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-s); align-items: center; }
-    .total-row input[type=number] { width: 120px; padding: 5px 8px; font-size: 13px; text-align: right; }
+    .total-row input { width: 120px; padding: 5px 8px; font-size: 13px; text-align: right; }
     .total-row .val { font-weight: 600; color: var(--text); }
-    .total-row .red { color: var(--danger); font-weight: 600; }
-
-    /* Diskon subtotal row */
     .disc-row { background: var(--danger-bg); border: 1px solid #f5c2c0; border-radius: var(--rs); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
     .disc-row-top { display: flex; align-items: center; justify-content: space-between; }
     .disc-row-label { font-size: 13px; font-weight: 600; color: var(--danger); }
     .disc-controls { display: flex; align-items: center; gap: 6px; }
-    .disc-controls input[type=number] { width: 100px; padding: 6px 8px; font-size: 13px; text-align: right; border-color: #f5c2c0; }
+    .disc-controls input { width: 100px; padding: 6px 8px; font-size: 13px; text-align: right; border-color: #f5c2c0; }
     .disc-type-wrap { display: flex; border: 1px solid var(--border); border-radius: var(--rs); overflow: hidden; }
     .disc-type-btn { padding: 6px 10px; font-size: 12px; font-weight: 700; border: none; background: #fafaf9; color: var(--text-s); cursor: pointer; font-family: inherit; }
     .disc-type-btn.active { background: var(--danger); color: #fff; }
-    .disc-scope-wrap { display: flex; gap: 6px; }
-    .scope-btn { flex: 1; padding: 5px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text-s); cursor: pointer; font-family: inherit; text-align: center; }
-    .scope-btn.active { background: var(--danger); color: #fff; border-color: var(--danger); }
-    .disc-amount-disp { font-size: 13px; font-weight: 700; color: var(--danger); text-align: right; }
-
+    .disc-amount-disp { font-size: 13px; font-weight: 700; color: var(--danger); }
     .total-final { display: flex; justify-content: space-between; font-size: 19px; font-weight: 700; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px; }
     .total-final span:last-child { color: var(--success-text); }
-
-    /* Actions */
     .action-grid { display: flex; flex-direction: column; gap: 10px; }
     .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border: none; border-radius: var(--rs); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
     .btn-wa { background: #25D366; color: #fff; }
@@ -91,8 +73,8 @@
     .empty-state { text-align: center; padding: 2rem 1rem; color: var(--text-t); }
     .empty-state i { font-size: 36px; margin-bottom: 10px; display: block; }
     .empty-state p { font-size: 14px; }
-    .copied-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a18; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; }
-    .copied-toast.show { opacity: 1; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a18; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; }
+    .toast.show { opacity: 1; }
     .divider { height: 1px; background: var(--border); margin: 14px 0; }
   </style>
 </head>
@@ -101,60 +83,32 @@
   <div class="header">
     <div style="font-size:28px;margin-bottom:6px">⚙️</div>
     <h1>Admin Panel <span class="badge">vpknbr</span></h1>
-    <p>Isi harga → diskon → total → balas WA</p>
+    <p>Isi harga + diskon → total → balas WA</p>
   </div>
 
-  <!-- Step 1 -->
   <div class="section">
     <div class="sec-title"><i class="ti ti-clipboard-text"></i> Step 1 — Paste Pesan WA</div>
     <textarea class="paste-area" id="pasteArea" placeholder="Paste pesan pesanan dari WA customer di sini..."></textarea>
-    <button class="btn-parse" onclick="parseOrder()">
-      <i class="ti ti-wand"></i> Parse Otomatis
-    </button>
+    <button class="btn-parse" onclick="parseOrder()"><i class="ti ti-wand"></i> Parse Otomatis</button>
   </div>
 
-  <!-- Step 2 -->
   <div class="section" id="orderSection" style="display:none">
-    <div class="sec-title"><i class="ti ti-receipt"></i> Step 2 — Isi Harga & Diskon</div>
+    <div class="sec-title"><i class="ti ti-receipt"></i> Step 2 — Isi Harga &amp; Diskon</div>
     <div class="info-grid" id="orderInfo"></div>
     <div class="divider"></div>
-
     <table class="prod-table">
-      <colgroup>
-        <col style="width:34%">
-        <col style="width:28px">
-        <col style="width:90px">
-        <col style="width:85px">
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Produk</th>
-          <th style="text-align:center">Qty</th>
-          <th class="r">Harga</th>
-          <th class="r">Subtotal</th>
-        </tr>
-      </thead>
+      <colgroup><col style="width:36%"><col style="width:32px"><col style="width:92px"><col style="width:86px"></colgroup>
+      <thead><tr><th>Produk</th><th style="text-align:center">Qty</th><th class="r">Harga</th><th class="r">Subtotal</th></tr></thead>
       <tbody id="priceTable"></tbody>
     </table>
-
     <div class="total-box">
-      <div class="total-row">
-        <span>Subtotal produk</span>
-        <span class="val" id="subtotalDisp">Rp 0</span>
-      </div>
-
-      <!-- Diskon subtotal -->
+      <div class="total-row"><span>Subtotal produk</span><span class="val" id="subtotalDisp">Rp 0</span></div>
       <div class="disc-row">
         <div class="disc-row-top">
-          <span class="disc-row-label"><i class="ti ti-tag" style="font-size:13px"></i> Diskon</span>
+          <span class="disc-row-label">Diskon</span>
           <span class="disc-amount-disp" id="discAmountDisp">—</span>
         </div>
-        <!-- Scope: per item atau subtotal -->
-        <div class="disc-scope-wrap">
-          <button class="scope-btn" id="scope-subtotal" onclick="setScope('subtotal')">Dari Subtotal</button>
-          <button class="scope-btn active" id="scope-item" onclick="setScope('item')" style="display:none">Per Item ↑</button>
-        </div>
-        <div class="disc-controls" id="discControls">
+        <div class="disc-controls">
           <input type="number" id="discValue" placeholder="0" min="0" oninput="calcTotal()" />
           <div class="disc-type-wrap">
             <button class="disc-type-btn active" id="discPct" onclick="setDiscType('pct')">%</button>
@@ -162,32 +116,17 @@
           </div>
         </div>
       </div>
-
-      <div class="total-row">
-        <span>Ongkir</span>
-        <input type="number" id="ongkirInput" placeholder="0" min="0" oninput="calcTotal()" />
-      </div>
-
-      <div class="total-final">
-        <span>Total Tagihan</span>
-        <span id="totalDisp">Rp 0</span>
-      </div>
+      <div class="total-row"><span>Ongkir</span><input type="number" id="ongkirInput" placeholder="0" min="0" oninput="calcTotal()" /></div>
+      <div class="total-final"><span>Total Tagihan</span><span id="totalDisp">Rp 0</span></div>
     </div>
   </div>
 
-  <!-- Step 3 -->
   <div class="section" id="actionSection" style="display:none">
-    <div class="sec-title"><i class="ti ti-send"></i> Step 3 — Kirim & Salin</div>
+    <div class="sec-title"><i class="ti ti-send"></i> Step 3 — Kirim &amp; Salin</div>
     <div class="action-grid">
-      <button class="btn btn-wa" onclick="replyCustomer()">
-        <i class="ti ti-brand-whatsapp"></i> Balas WA Customer dengan Total
-      </button>
-      <button class="btn btn-copy" onclick="copyInvoice()">
-        <i class="ti ti-copy"></i> Salin Teks Invoice Lengkap
-      </button>
-      <button class="btn btn-olsera" onclick="copyOlsera()">
-        <i class="ti ti-database"></i> Salin Format Input Olsera / Sistem
-      </button>
+      <button class="btn btn-wa" onclick="replyCustomer()"><i class="ti ti-brand-whatsapp"></i> Balas WA Customer dengan Invoice</button>
+      <button class="btn btn-copy" onclick="copyInvoice()"><i class="ti ti-copy"></i> Salin Teks Invoice</button>
+      <button class="btn btn-olsera" onclick="copyOlsera()"><i class="ti ti-database"></i> Salin Format Olsera / Sistem</button>
     </div>
   </div>
 
@@ -196,305 +135,184 @@
     <p>Paste pesan WA customer di atas,<br>lalu klik "Parse Otomatis"</p>
   </div>
 </div>
-
-<div class="copied-toast" id="toast">✓ Disalin!</div>
+<div class="toast" id="toast">Disalin!</div>
 
 <script>
-  let order = { name:'', wa:'', addr:'', products:[], kurir:'', time:'' };
-  let discType  = 'pct';   // 'pct' | 'nom'
-  let discScope = 'subtotal'; // 'subtotal' | 'item' (per item handled inline)
+var order = {name:'',wa:'',addr:'',products:[],kurir:'',time:''};
+var discType = 'pct';
 
-  function fmt(n) { return 'Rp ' + Math.round(n||0).toLocaleString('id-ID'); }
-  function parseNum(v) { return parseFloat(String(v).replace(/[^\d.]/g,''))||0; }
+function fmt(n){return 'Rp '+Math.round(n||0).toLocaleString('id-ID');}
+function parseNum(v){return parseFloat(String(v).replace(/[^\d.]/g,''))||0;}
+function showToast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = '✓ ' + msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
+function setDiscType(type){discType=type;document.getElementById('discPct').classList.toggle('active',type==='pct');document.getElementById('discNom').classList.toggle('active',type==='nom');calcTotal();}
+
+function getItemDisc(i){var p=order.products[i];var val=parseNum(p.discVal||0);var type=p.discType||'pct';var sub=parseNum(p.price)*p.qty;if(!val||!sub)return 0;return type==='pct'?sub*val/100:Math.min(val,sub);}
+
+function calcTotal(){
+  var sub=0;for(var i=0;i<order.products.length;i++)sub+=parseNum(order.products[i].price)*order.products[i].qty;
+  var iDT=0;for(var i=0;i<order.products.length;i++)iDT+=getItemDisc(i);
+  var dv=parseNum(document.getElementById('discValue')?document.getElementById('discValue').value:0);
+  var sDc=discType==='pct'?(sub-iDT)*dv/100:Math.min(dv,sub-iDT);
+  var tDc=iDT+sDc;
+  var ongkir=parseNum(document.getElementById('ongkirInput')?document.getElementById('ongkirInput').value:0);
+  var total=Math.max(0,sub-tDc+ongkir);
+  document.getElementById('subtotalDisp').textContent=fmt(sub);
+  document.getElementById('discAmountDisp').textContent=tDc>0?'- '+fmt(tDc):'—';
+  document.getElementById('totalDisp').textContent=fmt(total);
+  for(var i=0;i<order.products.length;i++){
+    var el=document.getElementById('psub_'+i);var pr=parseNum(order.products[i].price);
+    if(el){el.textContent=pr>0?fmt(pr*order.products[i].qty-getItemDisc(i)):'—';el.style.color=getItemDisc(i)>0?'var(--danger)':'var(--text)';}
+    var dl=document.getElementById('idisc_'+i);var d=getItemDisc(i);if(dl)dl.textContent=d>0?'- '+fmt(d):'';
   }
+}
 
-  function setDiscType(type) {
-    discType = type;
-    document.getElementById('discPct').classList.toggle('active', type==='pct');
-    document.getElementById('discNom').classList.toggle('active', type==='nom');
-    calcTotal();
-  }
+function getTotals(){
+  var sub=0;for(var i=0;i<order.products.length;i++)sub+=parseNum(order.products[i].price)*order.products[i].qty;
+  var iDT=0;for(var i=0;i<order.products.length;i++)iDT+=getItemDisc(i);
+  var dv=parseNum(document.getElementById('discValue')?document.getElementById('discValue').value:0);
+  var sDc=discType==='pct'?(sub-iDT)*dv/100:Math.min(dv,sub-iDT);
+  var tDc=iDT+sDc;
+  var ongkir=parseNum(document.getElementById('ongkirInput')?document.getElementById('ongkirInput').value:0);
+  return{sub:sub,itemDiscTotal:iDT,subtotalDisc:sDc,totalDisc:tDc,ongkir:ongkir,total:Math.max(0,sub-tDc+ongkir)};
+}
 
-  function setScope(scope) {
-    discScope = scope;
-    document.getElementById('scope-subtotal').classList.toggle('active', scope==='subtotal');
-    calcTotal();
-  }
+function stripEmoji(s){
+  var r='';for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);if(c<=255)r+=s[i];else r+=' ';}
+  return r.replace(/\s{2,}/g,' ').replace(/[-=]{3,}/g,' ').trim();
+}
 
-  // Hitung diskon per item
-  function getItemDisc(i) {
-    const p = order.products[i];
-    const val = parseNum(p.discVal||0);
-    const type = p.discType||'pct';
-    const sub = parseNum(p.price) * p.qty;
-    if (!val || !sub) return 0;
-    return type==='pct' ? sub * val/100 : Math.min(val, sub);
-  }
-
-  function calcTotal() {
-    const prods = order.products;
-    const sub = prods.reduce((s,p) => s + parseNum(p.price)*p.qty, 0);
-
-    // Diskon per item total
-    const itemDiscTotal = prods.reduce((_,p,i) => _ + getItemDisc(i), 0);
-
-    // Diskon subtotal
-    const discVal = parseNum(document.getElementById('discValue')?.value||0);
-    let subtotalDisc = 0;
-    if (discScope === 'subtotal') {
-      subtotalDisc = discType==='pct' ? (sub - itemDiscTotal)*discVal/100 : Math.min(discVal, sub-itemDiscTotal);
+function parseOrder(){
+  var raw=document.getElementById('pasteArea').value.trim();
+  if(!raw){alert('Paste dulu pesan WA customer.');return;}
+  order={name:'',wa:'',addr:'',products:[],kurir:'',time:''};
+  var lines=raw.split('\n');
+  var addrMode=false,prodMode=false;
+  for(var li=0;li<lines.length;li++){
+    var l=lines[li].trim();if(!l)continue;
+    var c=stripEmoji(l);if(!c||c.length<2)continue;
+    var lc=c.toLowerCase();
+    if(/^[\s\-=_*]+$/.test(c))continue;
+    if(/nama\s*[:\*]/.test(lc)){order.name=c.replace(/.*nama\s*[:\*\s]+/i,'').replace(/\*/g,'').trim();addrMode=false;prodMode=false;continue;}
+    if(/\bwa\b|whatsapp|no\.?\s*wa/.test(lc)){
+      var m=c.match(/(\+?62\d{8,}|0\d{8,})/);
+      if(m)order.wa=m[1];
+      else{var m2=c.match(/[:\*\s](\+?\d{10,})/);if(m2)order.wa=m2[1].trim();}
+      addrMode=false;prodMode=false;continue;
     }
-
-    const totalDisc = itemDiscTotal + subtotalDisc;
-    const ongkir = parseNum(document.getElementById('ongkirInput')?.value||0);
-    const total = Math.max(0, sub - totalDisc + ongkir);
-
-    document.getElementById('subtotalDisp').textContent = fmt(sub);
-    document.getElementById('discAmountDisp').textContent = totalDisc > 0 ? '− '+fmt(totalDisc) : '—';
-    document.getElementById('totalDisp').textContent = fmt(total);
-
-    // Update per-item subtotal cells
-    prods.forEach((p, i) => {
-      const el = document.getElementById('psub_'+i);
-      const pr = parseNum(p.price);
-      if (el) {
-        const itemSub = pr*p.qty - getItemDisc(i);
-        el.textContent = pr > 0 ? fmt(itemSub) : '—';
-        el.style.color = getItemDisc(i) > 0 ? 'var(--danger)' : 'var(--text)';
-      }
-    });
+    if(/^\d{1,2}[\/\\.]\d{1,2}/.test(c)){order.time=c.trim();continue;}
+    if(/\balamat\b/.test(lc)){
+      addrMode=true;prodMode=false;
+      var inl=c.replace(/.*alamat\s*[:\*\s]*/i,'').replace(/\*/g,'').trim();
+      if(inl&&inl.length>1)order.addr=inl;
+      continue;
+    }
+    if(/\bproduk\b/.test(lc)&&!/^\d/.test(c)){addrMode=false;prodMode=true;continue;}
+    if(/\bpengiriman\b/.test(lc)){addrMode=false;prodMode=false;order.kurir=c.replace(/.*pengiriman\s*[:\*\s]*/i,'').replace(/\*/g,'').trim();continue;}
+    if(/subtotal|ongkir|total tagihan|diskon|mohon|terima kasih|invoice|pesanan baru|konfirmasi/.test(lc)){addrMode=false;continue;}
+    if(/^\d+[.\)]/.test(c)){
+      addrMode=false;prodMode=true;
+      var clean=c.replace(/^\d+[.\)]\s*/,'').replace(/\*/g,'').trim();
+      var qM=clean.match(/[\u2014\-\u2013]\s*(\d+)\s*pcs/i)||clean.match(/\bx\s*(\d+)\b/i)||clean.match(/(\d+)\s*pcs/i);
+      var qty=qM?parseInt(qM[1]):1;
+      var nm=clean.replace(/[\u2014\-\u2013]\s*\d+\s*pcs.*/i,'').replace(/\bx\s*\d+\b.*/i,'').replace(/\d+\s*pcs.*/i,'').replace(/Rp[\s\d.,]+/g,'').trim();
+      if(nm&&nm.length>1)order.products.push({name:nm,qty:qty,price:'',discVal:'',discType:'pct'});
+      continue;
+    }
+    if(addrMode&&c.length>2)order.addr+=(order.addr?' ':'')+c.replace(/\*/g,'').trim();
   }
+  if(!order.products.length){alert('Produk tidak terbaca.\nPastikan format: "1. nama produk — N pcs"');return;}
+  renderOrderPanel();
+}
 
-  function parseOrder() {
-    const raw = document.getElementById('pasteArea').value.trim();
-    if (!raw) { alert('Paste dulu pesan WA customer.'); return; }
-    order = { name:'', wa:'', addr:'', products:[], kurir:'', time:'' };
-
-    // Bersihkan emoji & unicode
-    function strip(s) {
-      var result = '';
-      for (var i = 0; i < s.length; i++) {
-        var code = s.charCodeAt(i);
-        if (code <= 255) result += s[i];
-        else result += ' ';
-      }
-      return result.replace(/[-=]{3,}/g,' ').trim();
-    }
-
-    var lines = raw.split('\n');
-    var addrMode = false, prodMode = false;
-
-    for (var li = 0; li < lines.length; li++) {
-      var l = lines[li].trim();
-      if (!l) continue;
-      var c = strip(l);
-      if (!c) continue;
-
-      var isNama       = /nama\s*[:\*:]/i.test(c);
-      var isWA         = /\bwa\b|whatsapp|no\.?\s*wa|nomor/i.test(c);
-      var isAlamat     = /alamat/i.test(c);
-      var isProdukHdr  = /\bproduk\b/i.test(c) && !/^\d/.test(c);
-      var isPengiriman = /pengiriman/i.test(c);
-      var isItem       = /^\d+[\.\.)]\s+\S/.test(c);
-      var isGarbage    = /subtotal|ongkir|total|diskon|mohon|terima|invoice|pesanan baru/i.test(c);
-
-      if (isNama) {
-        order.name = c.replace(/.*nama\s*[:\*:\s]+/i,'').replace(/\*/g,'').trim();
-        addrMode=false; prodMode=false;
-      } else if (isWA) {
-        var m = c.match(/(\+?62[\d]{8,}|0[\d]{8,})/);
-        if (m) { order.wa = m[1]; }
-        else { var m2 = c.match(/[:\*]\s*([\d\+][\d\s\-]{8,})/); if (m2) order.wa = m2[1].replace(/[\s\-]/g,''); }
-        addrMode=false; prodMode=false;
-      } else if (isAlamat) {
-        addrMode=true; prodMode=false;
-        var inline = c.replace(/.*alamat\s*[:\*:\s]+/i,'').replace(/\*/g,'').trim();
-        if (inline) order.addr = inline;
-      } else if (isProdukHdr) {
-        addrMode=false; prodMode=true;
-      } else if (isPengiriman) {
-        addrMode=false; prodMode=false;
-        order.kurir = c.replace(/.*pengiriman\s*[:\*:\s]+/i,'').replace(/\*/g,'').trim();
-      } else if (isItem && !isGarbage) {
-        addrMode=false; prodMode=true;
-        var clean = c.replace(/^\d+[\.\.)]\s*/,'').replace(/\*/g,'');
-        var qtyM = clean.match(/[\u2014\-\u2013]\s*(\d+)\s*pcs/i)
-                || clean.match(/\bx\s*(\d+)/i)
-                || clean.match(/(\d+)\s*pcs/i);
-        var qty = qtyM ? parseInt(qtyM[1]) : 1;
-        var name = clean
-          .replace(/[\u2014\-\u2013]\s*\d+\s*pcs.*/i,'')
-          .replace(/\bx\s*\d+.*/i,'')
-          .replace(/\d+\s*pcs.*/i,'')
-          .replace(/Rp[\s\d.,]+/g,'')
-          .trim();
-        if (name && name.length > 1) {
-          order.products.push({name:name, qty:qty, price:'', discVal:'', discType:'pct'});
-        }
-      } else if (addrMode && !isGarbage && c.length > 2) {
-        order.addr += (order.addr ? ', ' : '') + c.replace(/\*/g,'').trim();
-      }
-    }
-
-    if (!order.products.length) {
-      alert('Produk tidak terbaca.\n\nPastikan ada baris: 1. nama produk — N pcs');
-      return;
-    }
-    renderOrderPanel();
-  }
-
-
-
-
-  function renderOrderPanel() {
-    document.getElementById('emptyState').style.display='none';
-    document.getElementById('orderSection').style.display='block';
-    document.getElementById('actionSection').style.display='block';
-    document.getElementById('orderInfo').innerHTML=`
-      <span class="info-label">Nama</span><span class="info-value">${order.name||'—'}</span>
-      <span class="info-label">WA</span><span class="info-value">${order.wa||'—'}</span>
-      <span class="info-label">Kurir</span><span class="info-value">${order.kurir||'—'}</span>
-      <span class="info-label">Alamat</span><span class="info-value">${order.addr||'—'}</span>`;
-
-    const tbody=document.getElementById('priceTable');
-    tbody.innerHTML='';
-    order.products.forEach((p,i)=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`
-        <td>
-          <div class="prod-name">${p.name}</div>
-          <div class="item-disc-wrap">
-            <input class="item-disc-input" type="number" placeholder="Diskon" min="0"
-              value="${p.discVal}"
-              oninput="order.products[${i}].discVal=this.value;calcTotal()" />
-            <div class="toggle-wrap">
-              <button class="toggle-btn ${p.discType==='pct'?'active':''}" onclick="setItemDiscType(${i},'pct')">%</button>
-              <button class="toggle-btn ${p.discType==='nom'?'active':''}" onclick="setItemDiscType(${i},'nom')">Rp</button>
-            </div>
-          </div>
-          <span class="item-disc-result" id="idisc_${i}"></span>
-        </td>
-        <td class="prod-qty">${p.qty}</td>
-        <td>
-          <input class="price-input" type="number" placeholder="0" min="0"
-            value="${p.price}"
-            oninput="order.products[${i}].price=this.value;calcTotal()" />
-        </td>
-        <td class="subtotal-cell" id="psub_${i}">—</td>`;
+function renderOrderPanel(){
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('orderSection').style.display='block';
+  document.getElementById('actionSection').style.display='block';
+  document.getElementById('orderInfo').innerHTML=
+    '<span class="info-label">Nama</span><span class="info-value">'+(order.name||'—')+'</span>'+
+    '<span class="info-label">WA</span><span class="info-value">'+(order.wa||'—')+'</span>'+
+    '<span class="info-label">Kurir</span><span class="info-value">'+(order.kurir||'—')+'</span>'+
+    '<span class="info-label">Alamat</span><span class="info-value">'+(order.addr||'—')+'</span>';
+  var tbody=document.getElementById('priceTable');tbody.innerHTML='';
+  for(var i=0;i<order.products.length;i++){
+    (function(idx){
+      var p=order.products[idx];var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+
+        '<div class="prod-name">'+p.name+'</div>'+
+        '<div class="item-disc-wrap">'+
+          '<input class="item-disc-input" type="number" placeholder="Diskon" min="0" value="'+p.discVal+'" oninput="order.products['+idx+'].discVal=this.value;calcTotal()"/>'+
+          '<div class="toggle-wrap">'+
+            '<button class="toggle-btn '+(p.discType==='pct'?'active':'')+'" onclick="setItemDiscType('+idx+',\'pct\')">%</button>'+
+            '<button class="toggle-btn '+(p.discType==='nom'?'active':'')+'" onclick="setItemDiscType('+idx+',\'nom\')">Rp</button>'+
+          '</div></div>'+
+        '<span class="item-disc-result" id="idisc_'+idx+'"></span></td>'+
+        '<td class="prod-qty">'+p.qty+'</td>'+
+        '<td><input class="price-input" type="number" placeholder="0" min="0" value="'+p.price+'" oninput="order.products['+idx+'].price=this.value;calcTotal()"/></td>'+
+        '<td class="subtotal-cell" id="psub_'+idx+'">—</td>';
       tbody.appendChild(tr);
-    });
-
-    document.getElementById('ongkirInput').value='';
-    document.getElementById('discValue').value='';
-    discType='pct'; discScope='subtotal';
-    document.getElementById('discPct').classList.add('active');
-    document.getElementById('discNom').classList.remove('active');
-    document.getElementById('scope-subtotal').classList.add('active');
-    calcTotal();
+    })(i);
   }
+  document.getElementById('ongkirInput').value='';
+  document.getElementById('discValue').value='';
+  discType='pct';document.getElementById('discPct').classList.add('active');document.getElementById('discNom').classList.remove('active');
+  calcTotal();
+}
 
-  function setItemDiscType(i, type) {
-    order.products[i].discType=type;
-    // update toggle UI
-    const row=document.getElementById('priceTable').rows[i];
-    row.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
-    row.querySelectorAll('.toggle-btn')[type==='pct'?0:1].classList.add('active');
-    calcTotal();
-    // show item disc result
-    const d=getItemDisc(i);
-    const el=document.getElementById('idisc_'+i);
-    if(el) el.textContent=d>0?'− '+fmt(d):'';
-  }
+function setItemDiscType(i,type){
+  order.products[i].discType=type;
+  var rows=document.getElementById('priceTable').rows;
+  var btns=rows[i].querySelectorAll('.toggle-btn');
+  btns[0].classList.toggle('active',type==='pct');btns[1].classList.toggle('active',type==='nom');
+  calcTotal();
+}
 
-  // Expose calcTotal to update idisc labels too
-  const _calcTotal = calcTotal;
-  function calcTotal() {
-    _calcTotal();
-    order.products.forEach((_,i)=>{
-      const el=document.getElementById('idisc_'+i);
-      const d=getItemDisc(i);
-      if(el) el.textContent=d>0?'− '+fmt(d):'';
-    });
+function buildInvoiceText(){
+  var t=getTotals();var now=new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'});
+  var msg='INVOICE PESANAN\n-------------------\n'+now+'\n';
+  if(order.name)msg+='Nama    : '+order.name+'\n';
+  if(order.wa)msg+='WA      : '+order.wa+'\n';
+  if(order.addr)msg+='Alamat  : '+order.addr+'\n';
+  msg+='\nRincian Produk:\n';
+  for(var i=0;i<order.products.length;i++){
+    var p=order.products[i];var pr=parseNum(p.price);var disc=getItemDisc(i);
+    if(pr>0){msg+=(i+1)+'. '+p.name+'\n   '+p.qty+' x '+fmt(pr)+' = '+fmt(pr*p.qty);if(disc>0)msg+=' (diskon - '+fmt(disc)+')';msg+='\n';}
+    else msg+=(i+1)+'. '+p.name+' - '+p.qty+' pcs\n';
   }
+  msg+='\nSubtotal produk : '+fmt(t.sub)+'\n';
+  if(t.itemDiscTotal>0)msg+='Diskon item     : - '+fmt(t.itemDiscTotal)+'\n';
+  if(t.subtotalDisc>0)msg+='Diskon subtotal : - '+fmt(t.subtotalDisc)+'\n';
+  if(t.totalDisc>0)msg+='Total diskon    : - '+fmt(t.totalDisc)+'\n';
+  msg+='Ongkir '+(order.kurir||'')+' : '+(t.ongkir>0?fmt(t.ongkir):'Gratis')+'\n';
+  msg+='-------------------\nTOTAL TAGIHAN   : '+fmt(t.total)+'\n-------------------\n';
+  msg+='\nPembayaran via Transfer:\n';
+  msg+='BCA     : 8455279913 a.n. Ikhbal Fadillah\n';
+  msg+='BNI     : 0305384923 a.n. Ikhbal Fadillah\n';
+  msg+='Mandiri : 1080014949011 a.n. Yendra Afriza\n';
+  msg+='Dana    : 081290020294 a.n. Ikhbal Fadillah\n';
+  msg+='\nMohon transfer sesuai nominal. Terima kasih!';
+  return msg;
+}
 
-  function getTotals() {
-    const sub=order.products.reduce((s,p)=>s+parseNum(p.price)*p.qty,0);
-    const itemDiscTotal=order.products.reduce((_,p,i)=>_+getItemDisc(i),0);
-    const discVal=parseNum(document.getElementById('discValue')?.value||0);
-    let subtotalDisc=0;
-    if(discScope==='subtotal') subtotalDisc=discType==='pct'?(sub-itemDiscTotal)*discVal/100:Math.min(discVal,sub-itemDiscTotal);
-    const totalDisc=itemDiscTotal+subtotalDisc;
-    const ongkir=parseNum(document.getElementById('ongkirInput')?.value||0);
-    return { sub, itemDiscTotal, subtotalDisc, totalDisc, ongkir, total:Math.max(0,sub-totalDisc+ongkir) };
+function buildOlseraText(){
+  var t=getTotals();var now=new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'});
+  var txt='=== INPUT OLSERA ===\nTanggal   : '+now+'\nCustomer  : '+order.name+'\nWA        : '+order.wa+'\nAlamat    : '+order.addr+'\nKurir     : '+order.kurir+'\nOngkir    : '+fmt(t.ongkir)+'\n\n--- Produk ---\n';
+  for(var i=0;i<order.products.length;i++){
+    var p=order.products[i];var pr=parseNum(p.price);var disc=getItemDisc(i);
+    txt+=(i+1)+'. '+p.name+'\n   Qty    : '+p.qty+'\n   Harga  : '+fmt(pr)+'\n   Diskon : '+(disc>0?'- '+fmt(disc):'-')+'\n   Sub    : '+fmt(pr*p.qty-disc)+'\n';
   }
+  txt+='\n--- Total ---\nSubtotal  : '+fmt(t.sub)+'\nDiskon    : '+(t.totalDisc>0?'- '+fmt(t.totalDisc):'-')+'\nOngkir    : '+fmt(t.ongkir)+'\nTOTAL     : '+fmt(t.total)+'\n===================';
+  return txt;
+}
 
-  function buildInvoiceText() {
-    const {sub,itemDiscTotal,subtotalDisc,totalDisc,ongkir,total}=getTotals();
-    const now=new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'});
-    let t='🧾 *INVOICE PESANAN*\n━━━━━━━━━━━━━━━━━━━\n';
-    t+=`🕐 ${now}\n`;
-    if(order.name) t+=`👤 *Nama:* ${order.name}\n`;
-    if(order.addr) t+=`📍 *Alamat:* ${order.addr}\n`;
-    t+='\n🛒 *Rincian Produk:*\n';
-    order.products.forEach((p,i)=>{
-      const pr=parseNum(p.price);
-      const disc=getItemDisc(i);
-      if(pr>0){
-        t+=`${i+1}. ${p.name}\n   ${p.qty} x ${fmt(pr)} = ${fmt(pr*p.qty)}`;
-        if(disc>0) t+=` *(diskon − ${fmt(disc)})*`;
-        t+='\n';
-      } else { t+=`${i+1}. ${p.name} — ${p.qty} pcs\n`; }
-    });
-    t+=`\n📦 Subtotal produk : ${fmt(sub)}\n`;
-    if(itemDiscTotal>0) t+=`🏷️ Diskon item      : − ${fmt(itemDiscTotal)}\n`;
-    if(subtotalDisc>0)  t+=`🏷️ Diskon subtotal  : − ${fmt(subtotalDisc)}\n`;
-    if(totalDisc>0)     t+=`✂️ Total diskon     : − ${fmt(totalDisc)}\n`;
-    t+=`🚚 Ongkir ${order.kurir||''} : ${ongkir>0?fmt(ongkir):'Gratis'}\n`;
-    t+='─────────────────────\n';
-    t+=`💰 *TOTAL TAGIHAN : ${fmt(total)}*\n`;
-    t+='━━━━━━━━━━━━━━━━━━━\n';
-    t+='_Mohon transfer sesuai nominal. Terima kasih!_ 🙏';
-    return t;
-  }
-
-  function buildOlseraText() {
-    const {sub,totalDisc,ongkir,total}=getTotals();
-    const now=new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'});
-    let t=`=== INPUT OLSERA ===\nTanggal   : ${now}\nCustomer  : ${order.name}\nWA        : ${order.wa}\nAlamat    : ${order.addr}\nKurir     : ${order.kurir}\nOngkir    : ${fmt(ongkir)}\n\n--- Produk ---\n`;
-    order.products.forEach((p,i)=>{
-      const pr=parseNum(p.price); const disc=getItemDisc(i);
-      t+=`${i+1}. ${p.name}\n   Qty    : ${p.qty}\n   Harga  : ${fmt(pr)}\n   Diskon : ${disc>0?'− '+fmt(disc):'-'}\n   Sub    : ${fmt(pr*p.qty-disc)}\n`;
-    });
-    t+=`\n--- Total ---\nSubtotal  : ${fmt(sub)}\nDiskon    : ${totalDisc>0?'− '+fmt(totalDisc):'-'}\nOngkir    : ${fmt(ongkir)}\nTOTAL     : ${fmt(total)}\n===================`;
-    return t;
-  }
-
-  function replyCustomer() {
-    if(!order.wa){alert('Nomor WA customer tidak ditemukan.');return;}
-    const wa=order.wa.replace(/\D/g,'');
-    const waFmt=wa.startsWith('0')?'62'+wa.slice(1):wa;
-    window.open('https://wa.me/'+waFmt+'?text='+encodeURIComponent(buildInvoiceText()),'_blank');
-  }
-
-  function copyInvoice() {
-    const t=buildInvoiceText();
-    navigator.clipboard?navigator.clipboard.writeText(t).then(()=>showToast('Invoice disalin!')):fallbackCopy(t,'Invoice disalin!');
-  }
-
-  function copyOlsera() {
-    const t=buildOlseraText();
-    navigator.clipboard?navigator.clipboard.writeText(t).then(()=>showToast('Format Olsera disalin!')):fallbackCopy(t,'Format Olsera disalin!');
-  }
-
-  function fallbackCopy(text,msg) {
-    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast(msg||'Disalin!');
-  }
+function replyCustomer(){
+  if(!order.wa){alert('Nomor WA customer tidak ditemukan.');return;}
+  var wa=order.wa.replace(/\D/g,'');var wf=wa.startsWith('0')?'62'+wa.slice(1):wa;
+  window.open('https://wa.me/'+wf+'?text='+encodeURIComponent(buildInvoiceText()),'_blank');
+}
+function copyInvoice(){var txt=buildInvoiceText();if(navigator.clipboard)navigator.clipboard.writeText(txt).then(function(){showToast('Invoice disalin!');});else fallback(txt,'Invoice disalin!');}
+function copyOlsera(){var txt=buildOlseraText();if(navigator.clipboard)navigator.clipboard.writeText(txt).then(function(){showToast('Format Olsera disalin!');});else fallback(txt,'Format Olsera disalin!');}
+function fallback(txt,msg){var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast(msg||'Disalin!');}
 </script>
 </body>
 </html>
