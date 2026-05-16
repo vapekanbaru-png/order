@@ -64,6 +64,24 @@
     .btn-submit:active{transform:scale(.98)}
     .spin{display:inline-block;animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
+    .srch-row{display:flex;gap:8px;margin-bottom:10px}
+    .srch-row input{flex:1;padding:9px 11px;font-size:14px;border:1px solid var(--border);border-radius:var(--rs);background:#fafaf9;color:var(--text);font-family:inherit}
+    .srch-row input:focus{outline:none;border-color:#1a1a18}
+    .srch-row button{padding:9px 13px;background:#1a1a18;color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px}
+    .srch-row button:hover{background:#333}
+    .tab-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+    .ctab{padding:5px 11px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:20px;cursor:pointer;background:var(--surface);color:var(--text-s);font-family:inherit}
+    .ctab:hover{border-color:var(--border-s);color:var(--text)}
+    .ctab.active{background:#1a1a18;color:#fff;border-color:#1a1a18}
+    .frame-wrap{position:relative;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;height:400px;background:#f9f9f9}
+    .frame-wrap iframe{width:100%;height:100%;border:none;display:block}
+    .frame-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#f9f9f9;z-index:2;pointer-events:none;font-size:13px;color:var(--text-t)}
+    .frame-loading.hide{display:none}
+    .frame-error{display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;text-align:center;padding:1.5rem}
+    .frame-error.show{display:flex}
+    .open-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:#1a1a18;color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none}
+    .open-btn:hover{background:#333}
+
   </style>
 </head>
 <body>
@@ -131,6 +149,32 @@
       <span>Harga dan ongkir dikonfirmasi admin. Admin akan balas WA kamu dengan total tagihan.</span>
     </div>
   </div>
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-shopping-bag"></i> Cek Katalog vpknbr.com</div>
+    <div class="srch-row">
+      <input type="text" id="catSearch" placeholder="Cari produk..." onkeydown="if(event.key==='Enter')doCatSearch()" />
+      <button onclick="doCatSearch()"><i class="ti ti-search"></i> Cari</button>
+    </div>
+    <div class="tab-row">
+      <button class="ctab active" onclick="loadCat('https://vpknbr.com',this)">Semua</button>
+      <button class="ctab" onclick="loadCat('https://vpknbr.com/catalog/liquid',this)">Liquid</button>
+      <button class="ctab" onclick="loadCat('https://vpknbr.com/catalog/starter-kit',this)">Pod</button>
+      <button class="ctab" onclick="loadCat('https://vpknbr.com/catalog/mod',this)">Mod</button>
+      <button class="ctab" onclick="loadCat('https://vpknbr.com/catalog/disposable',this)">Disposable</button>
+      <button class="ctab" onclick="loadCat('https://vpknbr.com/catalog/coil-catridge',this)">Coil</button>
+    </div>
+    <div class="frame-wrap">
+      <div class="frame-loading" id="catLoading"><span class="spin"><i class="ti ti-refresh"></i></span> Memuat vpknbr.com...</div>
+      <iframe id="catFrame" src="https://vpknbr.com" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" referrerpolicy="no-referrer" onload="onCatLoad()" onerror="onCatErr()"></iframe>
+      <div class="frame-error" id="catError">
+        <i class="ti ti-alert-circle" style="font-size:30px;color:var(--text-t)"></i>
+        <div style="font-size:14px;font-weight:600">Tidak bisa ditampilkan di sini</div>
+        <div style="font-size:12px;color:var(--text-s)">vpknbr.com memblokir embed.<br>Buka langsung di browser.</div>
+        <a id="catDirectBtn" href="https://vpknbr.com" target="_blank" class="open-btn"><i class="ti ti-external-link"></i> Buka vpknbr.com</a>
+      </div>
+    </div>
+  </div>
+
   <button class="btn-submit" onclick="submitOrder()"><i class="ti ti-brand-whatsapp"></i> Kirim Pesanan via WhatsApp</button>
 </div>
 <script>
@@ -200,6 +244,8 @@
     window.open('https://wa.me/'+STORE_WA+'?text='+encodeURIComponent(msg),'_blank');
   }
   addRow();addRow();
+
+
 </script>
 </body>
 </html>
