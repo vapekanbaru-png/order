@@ -1,272 +1,205 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Form Pesanan — vpknbr Vape Pekanbaru</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Pesanan - vpknbr</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #f5f5f3; --surface: #fff; --border: #e2e2de; --border-s: #c8c8c4;
-      --text: #1a1a18; --text-s: #6b6b68; --text-t: #a0a09c;
-      --info-bg: #e8f0fe; --info-text: #1a4bbd; --info-border: #b8d0fc;
-      --success-bg: #e6f7ee; --success-text: #0f6b35;
-      --r: 10px; --rs: 6px;
-    }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; padding: 1.5rem 1rem 5rem; }
-    .app { max-width: 480px; margin: 0 auto; }
-    .header { text-align: center; margin-bottom: 1.75rem; }
-    .header h1 { font-size: 21px; font-weight: 700; }
-    .header p { font-size: 13px; color: var(--text-s); margin-top: 4px; }
-    .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.25rem; margin-bottom: 12px; }
-    .sec-title { font-size: 11px; font-weight: 700; color: var(--text-s); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
-    .field { margin-bottom: 12px; }
-    .field:last-child { margin-bottom: 0; }
-    .field label { display: block; font-size: 13px; color: var(--text-s); margin-bottom: 5px; font-weight: 500; }
-    input[type=text], input[type=tel], textarea {
-      width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid var(--border);
-      border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit;
-    }
-    input:focus, textarea:focus { outline: none; border-color: #1a1a18; }
-    textarea { min-height: 76px; resize: vertical; }
-    .loc-btns { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-    .loc-btn, .maps-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-family: inherit; border: 1px solid; }
-    .loc-btn { color: var(--success-text); border-color: #a8ddb9; background: var(--success-bg); }
-    .maps-btn { color: var(--info-text); border-color: var(--info-border); background: var(--info-bg); }
-    .loc-btn:hover, .maps-btn:hover { opacity: .8; }
-    .loc-btn:disabled { opacity: .5; cursor: not-allowed; }
-    .loc-status { font-size: 12px; margin-top: 6px; color: var(--text-s); min-height: 16px; }
-
-    .prod-rows { display: flex; flex-direction: column; gap: 10px; }
-    .prod-card { border: 1px solid var(--border); border-radius: var(--rs); overflow: hidden; background: var(--surface); }
-    .prod-card-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px 6px; }
-    .prod-num { font-size: 11px; font-weight: 700; color: var(--text-t); text-transform: uppercase; letter-spacing: .05em; }
-    .del-btn { background: transparent; border: none; cursor: pointer; color: var(--text-t); font-size: 18px; line-height: 1; }
-    .del-btn:hover { color: #b01c1c; }
-    .prod-card-body { padding: 0 12px 12px; display: flex; align-items: center; gap: 10px; }
-    .prod-name-wrap { flex: 1; }
-    .prod-name-input { width: 100%; padding: 9px 11px; font-size: 14px; border: 1px solid var(--border); border-radius: var(--rs); background: #fafaf9; color: var(--text); font-family: inherit; }
-    .prod-name-input:focus { outline: none; border-color: #1a1a18; }
-    .qty-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .qty-btn { width: 30px; height: 36px; border: 1px solid var(--border); border-radius: var(--rs); background: var(--surface); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .qty-btn:hover { background: var(--bg); }
-    .qty-num { font-size: 15px; font-weight: 700; min-width: 20px; text-align: center; }
-
-    .add-btn { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; color: var(--text-s); border: 1px dashed var(--border-s); background: transparent; padding: 10px; border-radius: var(--rs); cursor: pointer; width: 100%; margin-top: 8px; font-family: inherit; }
-    .add-btn:hover { border-color: var(--text); color: var(--text); }
-
-    .ship-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .ship-card { border: 1px solid var(--border); border-radius: var(--rs); padding: 14px 10px; cursor: pointer; text-align: center; }
-    .ship-card:hover { border-color: var(--border-s); }
-    .ship-card.active { border: 2px solid #1a4bbd; background: var(--info-bg); }
-    .ship-card .s-icon { font-size: 28px; margin-bottom: 6px; }
-    .ship-card .s-name { font-size: 14px; font-weight: 700; }
-    .ship-card.active .s-name { color: var(--info-text); }
-    .ship-card .s-desc { font-size: 12px; color: var(--text-s); margin-top: 2px; }
-    .info-box { background: #fafaf9; border: 1px solid var(--border); border-radius: var(--rs); padding: 10px 12px; font-size: 12px; color: var(--text-s); display: flex; gap: 8px; margin-top: 10px; line-height: 1.5; }
-    .btn-submit { width: 100%; padding: 15px; background: #25D366; color: #fff; border: none; border-radius: var(--r); font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; font-family: inherit; }
-    .btn-submit:hover { background: #1ebe5d; }
-    .btn-submit:active { transform: scale(.98); }
-    .spin { display: inline-block; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f5f5f3;--surface:#fff;--border:#e2e2de;--border-s:#c8c8c4;--text:#1a1a18;--text-s:#6b6b68;--text-t:#a0a09c;--info-bg:#e8f0fe;--info-text:#1a4bbd;--info-border:#b8d0fc;--success-bg:#e6f7ee;--success-text:#0f6b35;--r:10px;--rs:6px}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:1.5rem 1rem 5rem}
+    .app{max-width:480px;margin:0 auto}
+    .header{text-align:center;margin-bottom:1.75rem}
+    .header h1{font-size:22px;font-weight:700}
+    .header p{font-size:13px;color:var(--text-s);margin-top:4px}
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:12px}
+    .sec-title{font-size:11px;font-weight:700;color:var(--text-s);letter-spacing:.07em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+    .field{margin-bottom:12px}
+    .field:last-child{margin-bottom:0}
+    .field label{display:block;font-size:13px;color:var(--text-s);margin-bottom:5px;font-weight:500}
+    input[type=text],input[type=tel],textarea{width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border);border-radius:var(--rs);background:#fafaf9;color:var(--text);font-family:inherit}
+    input:focus,textarea:focus{outline:none;border-color:#1a1a18}
+    textarea{min-height:76px;resize:vertical}
+    .loc-btns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .loc-btn,.maps-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:5px 12px;border-radius:20px;cursor:pointer;font-family:inherit;border:1px solid}
+    .loc-btn{color:var(--success-text);border-color:#a8ddb9;background:var(--success-bg)}
+    .maps-btn{color:var(--info-text);border-color:var(--info-border);background:var(--info-bg)}
+    .loc-btn:disabled{opacity:.5;cursor:not-allowed}
+    .loc-status{font-size:12px;margin-top:6px;color:var(--text-s);min-height:16px}
+    .prod-rows{display:flex;flex-direction:column;gap:10px}
+    .prod-card{border:1px solid var(--border);border-radius:var(--rs);overflow:hidden}
+    .prod-card-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 6px}
+    .prod-num{font-size:11px;font-weight:700;color:var(--text-t);text-transform:uppercase;letter-spacing:.05em}
+    .del-btn{background:transparent;border:none;cursor:pointer;color:var(--text-t);font-size:18px;line-height:1}
+    .del-btn:hover{color:#b01c1c}
+    .prod-card-body{padding:0 12px 12px;display:flex;align-items:center;gap:10px}
+    .prod-name-input{flex:1;padding:9px 11px;font-size:14px;border:1px solid var(--border);border-radius:var(--rs);background:#fafaf9;color:var(--text);font-family:inherit}
+    .prod-name-input:focus{outline:none;border-color:#1a1a18}
+    .qty-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .qty-btn{width:30px;height:36px;border:1px solid var(--border);border-radius:var(--rs);background:var(--surface);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .qty-btn:hover{background:var(--bg)}
+    .qty-num{font-size:15px;font-weight:700;min-width:20px;text-align:center}
+    .add-btn{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:var(--text-s);border:1px dashed var(--border-s);background:transparent;padding:10px;border-radius:var(--rs);cursor:pointer;width:100%;margin-top:8px;font-family:inherit}
+    .add-btn:hover{border-color:var(--text);color:var(--text)}
+    .ship-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .ship-card{border:1px solid var(--border);border-radius:var(--rs);padding:14px 10px;cursor:pointer;text-align:center}
+    .ship-card:hover{border-color:var(--border-s)}
+    .ship-card.active{border:2px solid #1a4bbd;background:var(--info-bg)}
+    .ship-card .s-icon{font-size:22px;margin-bottom:6px;color:var(--text-s)}
+    .ship-card .s-name{font-size:14px;font-weight:700}
+    .ship-card.active .s-name{color:var(--info-text)}
+    .ship-card .s-desc{font-size:12px;color:var(--text-s);margin-top:2px}
+    .pay-grid{display:flex;flex-direction:column;gap:8px}
+    .pay-card{border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:12px}
+    .pay-card:hover{border-color:var(--border-s)}
+    .pay-card.active{border:2px solid #1a4bbd;background:var(--info-bg)}
+    .pay-bank{font-size:13px;font-weight:700;min-width:58px;color:var(--text)}
+    .pay-card.active .pay-bank{color:var(--info-text)}
+    .pay-detail{font-size:13px;color:var(--text-s);line-height:1.5}
+    .pay-detail strong{color:var(--text);font-weight:600}
+    .info-box{background:#fafaf9;border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;font-size:12px;color:var(--text-s);display:flex;gap:8px;margin-top:10px;line-height:1.5}
+    .btn-submit{width:100%;padding:15px;background:#25D366;color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-family:inherit}
+    .btn-submit:hover{background:#1ebe5d}
+    .btn-submit:active{transform:scale(.98)}
+    .spin{display:inline-block;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
-    <div style="font-size:32px;margin-bottom:6px">🧾</div>
     <h1>Form Pesanan</h1>
-    <p>vpknbr — Vape Pekanbaru</p>
+    <p>vpknbr - Vape Pekanbaru</p>
   </div>
-
   <div class="section">
     <div class="sec-title"><i class="ti ti-user"></i> Data Kamu</div>
-    <div class="field">
-      <label>Nama Lengkap</label>
-      <input type="text" id="custName" placeholder="Contoh: Budi Santoso" autocomplete="name" />
-    </div>
-    <div class="field">
-      <label>Nomor WhatsApp</label>
-      <input type="tel" id="custWa" placeholder="08xxxxxxxxxx" autocomplete="tel" />
-    </div>
+    <div class="field"><label>Nama Lengkap</label><input type="text" id="custName" placeholder="Contoh: Budi Santoso" autocomplete="name"/></div>
+    <div class="field"><label>Nomor WhatsApp</label><input type="tel" id="custWa" placeholder="08xxxxxxxxxx" autocomplete="tel"/></div>
     <div class="field">
       <label>Alamat Pengiriman</label>
       <textarea id="custAddr" placeholder="Jalan, RT/RW, Kelurahan, Kecamatan, Kota, Kode Pos..."></textarea>
       <div class="loc-btns">
-        <button class="loc-btn" id="btnAutoLoc" onclick="autoDetectLocation()">
-          <i class="ti ti-current-location"></i> Deteksi Lokasi Otomatis
-        </button>
-        <button class="maps-btn" onclick="openMaps()">
-          <i class="ti ti-map-pin"></i> Buka Maps
-        </button>
+        <button class="loc-btn" id="btnAutoLoc" onclick="autoDetectLocation()"><i class="ti ti-current-location"></i> Deteksi Lokasi</button>
+        <button class="maps-btn" onclick="openMaps()"><i class="ti ti-map-pin"></i> Buka Maps</button>
       </div>
       <div class="loc-status" id="locStatus"></div>
     </div>
   </div>
-
   <div class="section">
     <div class="sec-title"><i class="ti ti-shopping-bag"></i> Produk yang Dipesan</div>
     <div class="prod-rows" id="productList"></div>
-    <button class="add-btn" onclick="addRow()">
-      <i class="ti ti-plus"></i> Tambah produk lain
-    </button>
+    <button class="add-btn" onclick="addRow()"><i class="ti ti-plus"></i> Tambah produk lain</button>
   </div>
-
   <div class="section">
     <div class="sec-title"><i class="ti ti-truck"></i> Pilihan Pengiriman</div>
     <div class="ship-grid">
       <div class="ship-card" id="ship-jnt" onclick="selectShip('JNT')">
-        <div class="s-icon">📦</div>
+        <div class="s-icon"><i class="ti ti-package"></i></div>
         <div class="s-name">J&amp;T Express</div>
         <div class="s-desc">Reguler / Express</div>
       </div>
       <div class="ship-card" id="ship-gosend" onclick="selectShip('GOSEND')">
-        <div class="s-icon">🛵</div>
+        <div class="s-icon"><i class="ti ti-motorbike"></i></div>
         <div class="s-name">GoSend</div>
         <div class="s-desc">Same Day / Instant</div>
       </div>
     </div>
+  </div>
+  <div class="section">
+    <div class="sec-title"><i class="ti ti-credit-card"></i> Metode Pembayaran</div>
+    <div class="pay-grid">
+      <div class="pay-card" id="pay-bca" onclick="selectPay('BCA')">
+        <div class="pay-bank">BCA</div>
+        <div class="pay-detail"><strong>8455279913</strong><br>a.n. Ikhbal Fadillah</div>
+      </div>
+      <div class="pay-card" id="pay-bni" onclick="selectPay('BNI')">
+        <div class="pay-bank">BNI</div>
+        <div class="pay-detail"><strong>0305384923</strong><br>a.n. Ikhbal Fadillah</div>
+      </div>
+      <div class="pay-card" id="pay-mandiri" onclick="selectPay('MANDIRI')">
+        <div class="pay-bank">Mandiri</div>
+        <div class="pay-detail"><strong>1080014949011</strong><br>a.n. Yendra Afriza</div>
+      </div>
+      <div class="pay-card" id="pay-dana" onclick="selectPay('DANA')">
+        <div class="pay-bank">Dana</div>
+        <div class="pay-detail"><strong>081290020294</strong><br>a.n. Ikhbal Fadillah</div>
+      </div>
+    </div>
     <div class="info-box">
       <i class="ti ti-info-circle" style="font-size:15px;flex-shrink:0;margin-top:1px"></i>
-      <span>Harga & ongkir akan dikonfirmasi admin. Admin akan membalas WA kamu dengan total tagihan.</span>
+      <span>Harga dan ongkir dikonfirmasi admin. Admin akan balas WA kamu dengan total tagihan.</span>
     </div>
   </div>
-
-  <button class="btn-submit" onclick="submitOrder()">
-    <i class="ti ti-brand-whatsapp"></i> Kirim Pesanan via WhatsApp
-  </button>
+  <button class="btn-submit" onclick="submitOrder()"><i class="ti ti-brand-whatsapp"></i> Kirim Pesanan via WhatsApp</button>
 </div>
-
 <script>
-  const STORE_WA = '628117694443';
-  let rows = [];
-  let selectedShip = '';
-
-  function addRow() {
-    rows.push({ name: '', qty: 1 });
-    renderRows();
-  }
-
-  function removeRow(i) {
-    if (rows.length <= 1) return;
-    rows.splice(i, 1);
-    renderRows();
-  }
-
-  function changeQty(i, d) {
-    rows[i].qty = Math.max(1, rows[i].qty + d);
-    renderRows();
-  }
-
-  function renderRows() {
-    const list = document.getElementById('productList');
-    list.innerHTML = '';
-    rows.forEach((r, i) => {
-      const div = document.createElement('div');
-      div.className = 'prod-card';
-      div.innerHTML = `
-        <div class="prod-card-head">
-          <span class="prod-num">Produk ${i + 1}</span>
-          <button class="del-btn" onclick="removeRow(${i})"><i class="ti ti-x"></i></button>
-        </div>
-        <div class="prod-card-body">
-          <div class="prod-name-wrap">
-            <input class="prod-name-input" type="text"
-              placeholder="Nama produk — contoh: Foom Icy Mango"
-              value="${r.name}" oninput="rows[${i}].name=this.value" />
-          </div>
-          <div class="qty-wrap">
-            <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
-            <span class="qty-num">${r.qty}</span>
-            <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
-          </div>
-        </div>`;
+  var STORE_WA='628117694443';
+  var rows=[];var selectedShip='';var selectedPay='';
+  var PAYMENT={BCA:{label:'BCA',no:'8455279913',an:'Ikhbal Fadillah'},BNI:{label:'BNI',no:'0305384923',an:'Ikhbal Fadillah'},MANDIRI:{label:'Mandiri',no:'1080014949011',an:'Yendra Afriza'},DANA:{label:'Dana',no:'081290020294',an:'Ikhbal Fadillah'}};
+  function addRow(){rows.push({name:'',qty:1});renderRows()}
+  function removeRow(i){if(rows.length<=1)return;rows.splice(i,1);renderRows()}
+  function changeQty(i,d){rows[i].qty=Math.max(1,rows[i].qty+d);renderRows()}
+  function renderRows(){
+    var list=document.getElementById('productList');list.innerHTML='';
+    rows.forEach(function(r,i){
+      var div=document.createElement('div');div.className='prod-card';
+      div.innerHTML='<div class="prod-card-head"><span class="prod-num">Produk '+(i+1)+'</span><button class="del-btn" onclick="removeRow('+i+')"><i class="ti ti-x"></i></button></div><div class="prod-card-body"><input class="prod-name-input" type="text" placeholder="Nama produk" value="'+r.name+'" oninput="rows['+i+'].name=this.value"/><div class="qty-wrap"><button class="qty-btn" onclick="changeQty('+i+',-1)">-</button><span class="qty-num">'+r.qty+'</span><button class="qty-btn" onclick="changeQty('+i+',1)">+</button></div></div>';
       list.appendChild(div);
     });
   }
-
-  function selectShip(s) {
-    selectedShip = s;
-    document.querySelectorAll('.ship-card').forEach(el => el.classList.remove('active'));
-    document.getElementById('ship-' + s.toLowerCase()).classList.add('active');
+  function selectShip(s){selectedShip=s;document.querySelectorAll('.ship-card').forEach(function(el){el.classList.remove('active')});document.getElementById('ship-'+s.toLowerCase()).classList.add('active')}
+  function selectPay(p){selectedPay=p;document.querySelectorAll('.pay-card').forEach(function(el){el.classList.remove('active')});document.getElementById('pay-'+p.toLowerCase()).classList.add('active')}
+  function openMaps(){window.open('https://www.google.com/maps/search/'+encodeURIComponent(document.getElementById('custAddr').value.trim()||'Pekanbaru'),'_blank')}
+  function setLocStatus(msg){document.getElementById('locStatus').textContent=msg}
+  function autoDetectLocation(){
+    if(!navigator.geolocation){setLocStatus('Browser tidak support GPS');return}
+    var btn=document.getElementById('btnAutoLoc');
+    btn.disabled=true;btn.innerHTML='<span class="spin"><i class="ti ti-refresh"></i></span> Mendeteksi...';
+    setLocStatus('Mendapatkan koordinat GPS...');
+    navigator.geolocation.getCurrentPosition(function(pos){
+      var lat=pos.coords.latitude,lng=pos.coords.longitude;
+      setLocStatus('Mencari nama alamat...');
+      fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json&addressdetails=1&accept-language=id',{headers:{Accept:'application/json'}})
+        .then(function(r){return r.json()})
+        .then(function(data){
+          var a=data.address||{};
+          var parts=[a.road||a.pedestrian||'',a.suburb||a.neighbourhood||'',a.village||a.town||a.city_district||'',a.city||a.county||'',a.state||'',a.postcode||''].filter(Boolean);
+          document.getElementById('custAddr').value=parts.join(', ');
+          setLocStatus('Lokasi terdeteksi. Lengkapi jika perlu.');
+          setTimeout(function(){setLocStatus('')},4000);
+        }).catch(function(){document.getElementById('custAddr').value=lat.toFixed(6)+', '+lng.toFixed(6);setLocStatus('Lengkapi detail alamat secara manual.')});
+      btn.disabled=false;btn.innerHTML='<i class="ti ti-current-location"></i> Deteksi Lokasi';
+    },function(err){
+      var m=err.code===1?'Izin lokasi ditolak':err.code===2?'Lokasi tidak tersedia':'Timeout, coba lagi';
+      setLocStatus(m);btn.disabled=false;btn.innerHTML='<i class="ti ti-current-location"></i> Deteksi Lokasi';
+    },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
   }
-
-  function openMaps() {
-    const addr = document.getElementById('custAddr').value.trim();
-    window.open('https://www.google.com/maps/search/' + encodeURIComponent(addr || 'Pekanbaru'), '_blank');
+  function submitOrder(){
+    var name=document.getElementById('custName').value.trim();
+    var wa=document.getElementById('custWa').value.trim().replace(/\D/g,'');
+    var addr=document.getElementById('custAddr').value.trim();
+    var filled=rows.filter(function(r){return r.name.trim()});
+    if(!name){alert('Nama lengkap belum diisi.');return}
+    if(!wa){alert('Nomor WhatsApp belum diisi.');return}
+    if(!addr){alert('Alamat pengiriman belum diisi.');return}
+    if(!filled.length){alert('Isi minimal 1 nama produk.');return}
+    if(!selectedShip){alert('Pilih pengiriman dulu ya.');return}
+    if(!selectedPay){alert('Pilih metode pembayaran dulu ya.');return}
+    var waFmt=wa.startsWith('0')?'62'+wa.slice(1):wa;
+    var kurir=selectedShip==='JNT'?'J&T Express':'GoSend';
+    var pay=PAYMENT[selectedPay];
+    var now=new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'});
+    var msg='PESANAN BARU\n-------------------\n';
+    msg+='Tanggal    : '+now+'\n';
+    msg+='Nama       : '+name+'\n';
+    msg+='WA         : '+waFmt+'\n';
+    msg+='Alamat     : '+addr+'\n\nProduk:\n';
+    filled.forEach(function(r,i){msg+=(i+1)+'. '+r.name+' - '+r.qty+' pcs\n'});
+    msg+='\nPengiriman : '+kurir+'\nPembayaran : '+pay.label+' '+pay.no+' a.n. '+pay.an+'\n-------------------\nMohon konfirmasi harga, ongkir & total tagihan. Terima kasih!';
+    window.open('https://wa.me/'+STORE_WA+'?text='+encodeURIComponent(msg),'_blank');
   }
-
-  function setLocStatus(msg, icon) {
-    document.getElementById('locStatus').innerHTML = msg ? `<i class="ti ti-${icon}"></i> ${msg}` : '';
-  }
-
-  async function autoDetectLocation() {
-    if (!navigator.geolocation) { setLocStatus('Browser tidak support GPS', 'alert-circle'); return; }
-    const btn = document.getElementById('btnAutoLoc');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spin"><i class="ti ti-refresh"></i></span> Mendeteksi...';
-    setLocStatus('Mendapatkan koordinat GPS...', 'loader');
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude: lat, longitude: lng } = pos.coords;
-        setLocStatus('Mencari nama alamat...', 'loader');
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1&accept-language=id`, { headers: { Accept: 'application/json' } });
-          const data = await res.json();
-          const a = data.address || {};
-          const parts = [a.road||a.pedestrian||'', a.suburb||a.neighbourhood||'', a.village||a.town||a.city_district||'', a.city||a.county||'', a.state||'', a.postcode||''].filter(Boolean);
-          document.getElementById('custAddr').value = parts.join(', ');
-          setLocStatus('Lokasi berhasil dideteksi ✓', 'check');
-          setTimeout(() => setLocStatus('', ''), 3000);
-        } catch {
-          document.getElementById('custAddr').value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-          setLocStatus('Lengkapi detail alamat secara manual', 'alert-triangle');
-        }
-        btn.disabled = false;
-        btn.innerHTML = '<i class="ti ti-current-location"></i> Deteksi Lokasi Otomatis';
-      },
-      (err) => {
-        const m = err.code===1?'Izin lokasi ditolak':err.code===2?'Lokasi tidak tersedia':'Timeout, coba lagi';
-        setLocStatus(m, 'alert-circle');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="ti ti-current-location"></i> Deteksi Lokasi Otomatis';
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-  }
-
-  function submitOrder() {
-    const name  = document.getElementById('custName').value.trim();
-    const wa    = document.getElementById('custWa').value.trim().replace(/\D/g, '');
-    const addr  = document.getElementById('custAddr').value.trim();
-    const filled = rows.filter(r => r.name.trim());
-    if (!name)          { alert('Nama lengkap belum diisi.'); return; }
-    if (!wa)            { alert('Nomor WhatsApp belum diisi.'); return; }
-    if (!addr)          { alert('Alamat pengiriman belum diisi.'); return; }
-    if (!filled.length) { alert('Isi minimal 1 nama produk.'); return; }
-    if (!selectedShip)  { alert('Pilih pengiriman dulu ya.'); return; }
-
-    const waFmt = wa.startsWith('0') ? '62' + wa.slice(1) : wa;
-    const kurir = selectedShip === 'JNT' ? 'J&T Express' : 'GoSend';
-    const now   = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
-
-    let msg = '🧾 *PESANAN BARU*\n━━━━━━━━━━━━━━━━━━━\n';
-    msg += `🕐 ${now}\n`;
-    msg += `👤 *Nama:* ${name}\n`;
-    msg += `📱 *WA:* ${waFmt}\n`;
-    msg += `📍 *Alamat:*\n${addr}\n\n`;
-    msg += '🛒 *Produk:*\n';
-    filled.forEach((r, idx) => { msg += `${idx+1}. ${r.name} — ${r.qty} pcs\n`; });
-    msg += `\n🚚 *Pengiriman:* ${kurir}\n`;
-    msg += '━━━━━━━━━━━━━━━━━━━\n';
-    msg += '_Mohon konfirmasi harga, ongkir & total tagihan. Terima kasih!_ 🙏';
-
-    window.open('https://wa.me/' + STORE_WA + '?text=' + encodeURIComponent(msg), '_blank');
-  }
-
-  addRow();
-  addRow();
+  addRow();addRow();
 </script>
 </body>
 </html>
